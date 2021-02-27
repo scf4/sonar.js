@@ -1,0 +1,40 @@
+{
+  "name": "sonajs",
+  "version": "0.1.0",
+  "main": "build/index.js",
+  "author": "@scottinallcaps",
+  "license": "none",
+  "engines": {
+    "node": "15.10.0"
+  },
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "start": "node ./build",
+    "dev": "yarn run nodemon --exec 'ts-node --files lib/examples'"
+  },
+  "dependencies": {
+    "2d-array-rotation": "^2.1.1",
+    "@types/lodash": "^4.14.168",
+    "@types/lodash.zip": "^4.2.6",
+    "axios": "^0.21.1",
+    "dotenv": "^8.2.0",
+    "fast-case": "^1.6.0",
+    "lodash": "^4.17.21",
+    "lodash.zip": "^4.2.0",
+    "websocket": "^1.0.33",
+    "ws": "7.4.3"
+  },
+  "devDependencies": {
+    "@types/dotenv": "^8.2.0",
+    "@types/node": "^14.14.31",
+    "@types/node-fetch": "^2.5.8",
+    "@types/ws": "^7.4.0",
+    "@typescript-eslint/eslint-plugin": "^4.14.2",
+    "@typescript-eslint/parser": "^4.14.2",
+    "eslint": "^7.19.0",
+    "nodemon": "^2.0.7",
+    "ts-node": "^9.1.1",
+    "typescript": "4.1.x"
+  }
+}
