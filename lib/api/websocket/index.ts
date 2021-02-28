@@ -49,9 +49,7 @@ let createWebSocket = async (args: Params) => {
     didConnect = true;
   };
 
-  ws.onmessage = (raw) => {
-    // console.log('[Received]: ' + JSON.stringify(raw.data.toString()));
-  
+  ws.onmessage = (raw) => {  
     let json = raw.data.toString();
     let message: ReceivedMessage = JSON.parse(json);
 
@@ -59,12 +57,12 @@ let createWebSocket = async (args: Params) => {
     handleMessage(message);
   };
 
-  ws.onclose = ({ code, reason, target }) => {
-    console.info('WS CLOSE EVENT: ' + JSON.stringify({ code, reason, target }));
+  ws.onclose = ({ code, reason }) => {
+    console.warn('Websocket closed:' + JSON.stringify({ code, reason }));
   };
 
   ws.onerror = ({ error, message, type }) => {
-    console.error('WS CONNECTION ERROR: ' + JSON.stringify({ error, message, type }));
+    console.error('Websocket error: ' + JSON.stringify({ error, message, type }));
   };
 
   let isConnectedPromise = new Promise<boolean>((res, rej) => {

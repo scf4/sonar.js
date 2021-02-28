@@ -26,7 +26,7 @@ let processQueue = async () => {
   if (processing) return;
   processing = true;
 
-  // This all should all be refactored eventually
+  // This should all be refactored eventually
   for(let i = 0; i <= 5; i += 1) {
     if (getState().ws!.readyState === WebSocket.OPEN) {   
       break;

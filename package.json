@@ -1,11 +1,11 @@
 {
-  "name": "sonajs",
+  "name": "sonarjs",
   "version": "0.1.0",
   "main": "build/index.js",
   "author": "@scottinallcaps",
   "license": "none",
   "engines": {
-    "node": "15.10.0"
+    "node": "15.x.x"
   },
   "private": true,
   "scripts": {

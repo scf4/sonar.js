@@ -2,7 +2,7 @@ import { createApiClient } from '..';
 import { getState } from '../state';
 import { rotate270 } from '2d-array-rotation';
 
-export enum Room {
+enum Room {
   Lobby = 122,
   Sonarena = 3398,
   ColesHell = 3852,
@@ -10,10 +10,10 @@ export enum Room {
   ScottSnapbotRoom = 12326,
 }
 
-export enum UserId {
-  SnapBot = 3563,
-  Scott = 954,
-}
+// enum UserId {
+//   SnapBot = 3563,
+//   Scott = 954,
+// }
 
 async function main() {
   let api = await createApiClient(Room.ScottSnapbotRoom);

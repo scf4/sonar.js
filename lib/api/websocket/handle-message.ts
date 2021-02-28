@@ -26,7 +26,7 @@ export type ReceivedMessage =
 
 let handleMessage = async (msg: ReceivedMessage) => {
   if (process.env.NODE_ENV !== 'production') {
-    // console.log('[Received]: ' + JSON.stringify(msg));
+    console.log('[Received]: ' + JSON.stringify(msg));
   }
 
   switch (msg.type) {
