@@ -1,8 +1,8 @@
 import WebSocket from 'ws';
 import { decamelizeKeys } from 'fast-case';
-import { WebSocketDoesntExistError, WebSocketNotOpenError } from '../../errors';
-import { getState } from '../../state';
-import { sleep } from '../../utils/sleep';
+import { WebSocketDoesntExistError, WebSocketNotOpenError } from 'lib/errors';
+import { getState } from 'lib/state';
+import { sleep } from 'utils/sleep';
 
 let sendMessage = (message: string) => new Promise<void>((resolve, reject) => {
   let { ws } = getState();

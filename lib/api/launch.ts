@@ -1,15 +1,15 @@
-import { request } from '../api/request';
-import { SONAR_BUILD, SONAR_VERSION } from '../constants';
-import { StateCheckCallError } from '../errors';
-import { updateState } from '../state';
+import { request } from 'lib/api/request';
+import { SONAR_BUILD, SONAR_VERSION } from 'lib/constants';
+import { StateCheckCallError } from 'lib/errors';
+import { updateState } from 'lib/state';
 
 let loadAssets = async () => {
   let res = await request.get<AssetsResponse>('/assets');
 
   let droppables = new Map<string, Droppable>(Object.entries(res.data.droppables));
   
-  updateState(state => state.assets = {
-    ...state.assets,
+  updateState(state => state.cache.assets = {
+    ...state.cache.assets,
     droppables,
   });
 };

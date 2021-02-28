@@ -1,5 +1,5 @@
-import { request } from './request';
-import { createWebSocket } from './websocket';
+import { request } from 'lib/api/request';
+import { createWebSocket } from 'lib/api/websocket';
 
 let listRooms = () => request
   .get<ListRoomsResponse>('/rooms')

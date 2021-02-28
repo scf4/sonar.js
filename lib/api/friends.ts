@@ -1,4 +1,4 @@
-import { request } from '../api/request';
+import { request } from 'lib/api/request';
 
 let listFriends = () => 
   request.get<ListFriendsResponse>('/friends-list')

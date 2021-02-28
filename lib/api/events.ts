@@ -1,4 +1,4 @@
-type EventHandler<Data> = (data: Data) => Promise<void>;
+type EventHandler<Data> = (data: Data) => Promise<void> | void;
 
 export default class EventManager {
   #events = {};
@@ -12,7 +12,7 @@ export default class EventManager {
   }
 }
 
-let events = new EventManager;
+let events = new EventManager();
 
 export {
   events,

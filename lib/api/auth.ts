@@ -1,4 +1,4 @@
-import { request } from '../api/request';
+import { request } from 'lib/api/request';
 
 let smsVerification = (number: string) =>
   request.post('/users/sms-verification', { number });

@@ -12,7 +12,7 @@ type EventName =
 
 type EventHandler = (data: any) => Promise<void> | void;
 
-interface OnBoopData {
+interface BoopData {
   roomId: number;
   roomName: string;
   username: string;

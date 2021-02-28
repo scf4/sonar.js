@@ -1,7 +1,6 @@
-import { getState, updateState } from '../../state';
-// import { eventHandlerMap } from '../events';
-import { NoUserIdError } from '../../errors';
-import { events } from '../events';
+import { getState, updateState } from 'lib/state';
+import { NoUserIdError } from 'lib/errors';
+import { events } from 'lib/api/events';
 
 enum ReceivedMessageType {
   SpaceJoined = 'space_joined',
@@ -31,9 +30,7 @@ let handleMessage = async (msg: ReceivedMessage) => {
 
   switch (msg.type) {
     case ReceivedMessageType.DisplayToast: {
-      if (msg.data.message.includes('booped you')) {
-        handleBoop(msg.data);
-      }
+      if (msg.data.message.includes('booped you')) handleBoop(msg.data);
       return;
     }
 
@@ -61,7 +58,7 @@ let handleBoop = async ({ senderRoomId: roomId, highlightedText }: DisplayToastD
 
   username = username?.replace('@', '') ?? null;
 
-  let data: OnBoopData = {
+  let data: BoopData = {
     roomId,
     username,
     roomName,

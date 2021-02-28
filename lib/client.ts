@@ -1,8 +1,9 @@
-import 'dotenv/config';
+require('dotenv/config');
+
 import * as api from './api';
 import { updateHeaders } from './api/request';
 import { ClientArgsMissingError } from './errors';
-import {  updateState } from './state';
+import { updateState } from './state';
 
 interface ClientArgs {
   authToken: string;
@@ -33,7 +34,7 @@ let createApiClient = async (roomId?: number, args?: ClientArgs) => {
 
 let checkArgs = (args: ClientArgs) => {
   let argsArray = ['authToken', 'clientName', 'userId', 'roomId'];
-  let missingArgs = Object.keys(args).filter(key => !argsArray.includes(key));
+  let missingArgs = argsArray.filter(key => !Object.keys(args).includes(key));
 
   if (missingArgs.length) {
     throw ClientArgsMissingError(missingArgs.join(', '));

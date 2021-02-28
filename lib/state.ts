@@ -23,10 +23,9 @@ interface State {
   friendRequests: Set<number>;
   rooms: Set<number>;
 
-  /* Cache */
-  assets: Assets;
-  asssetsHash?: string;
   cache: {
+    assets: Assets;
+    asssetsHash?: string;
     users: Map<number, any>;
     rooms: Map<number, any>;
   };
