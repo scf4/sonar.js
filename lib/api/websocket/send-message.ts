@@ -4,22 +4,23 @@ import { WebSocketDoesntExistError, WebSocketNotOpenError } from '../../errors';
 import { getState } from '../../state';
 import { sleep } from '../../utils/sleep';
 
-let sendMessage = (message: string) => new Promise<void>((res, rej) => {
+let sendMessage = (message: string) => new Promise<void>((resolve, reject) => {
   let { ws } = getState();
+
   if (!ws || ws.readyState !== WebSocket.OPEN) {
     throw WebSocketDoesntExistError();
   }
 
   ws.send(message, (err) => {
-    if (!err) res();
-    rej(err);
+    if (!err) resolve();
+    reject(err);
   });
 });
 
-// Message queue
+/* Message queue */
 
 let queue: string[] = [];
-let delay = 400;
+let delay = 275;
 let processing = false;
 
 let processQueue = async () => {
@@ -28,12 +29,9 @@ let processQueue = async () => {
 
   // This should all be refactored eventually
   for(let i = 0; i <= 5; i += 1) {
-    if (getState().ws!.readyState === WebSocket.OPEN) {   
-      break;
-    } else {
-      sleep(750);
-    }
+    if (getState().ws!.readyState === WebSocket.OPEN) break;
     if (i === 5) throw WebSocketNotOpenError();
+    sleep(1000);
   }
 
   while (queue.length) {

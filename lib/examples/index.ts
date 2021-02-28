@@ -2,21 +2,15 @@ import { createApiClient } from '..';
 import { getState } from '../state';
 import { rotate270 } from '2d-array-rotation';
 
-enum Room {
-  Lobby = 122,
-  Sonarena = 3398,
-  ColesHell = 3852,
-  SnapbotHome = 5028,
-  ScottSnapbotRoom = 12326,
-}
-
-// enum UserId {
-//   SnapBot = 3563,
-//   Scott = 954,
+// enum Room {
+//   Lobby = 122,
+//   SonarArena = 3398,
+//   SonargramHome = 5028,
+//   ScottsSonargramRoom = 12326,
 // }
 
 async function main() {
-  let api = await createApiClient(Room.ScottSnapbotRoom);
+  let api = await createApiClient();
 
   api.events.on('join_room', async () => {
     let objects = getState().currentRoom?.entities ?? [];
@@ -31,21 +25,15 @@ async function main() {
     grid = rotate270(grid);
   });
 
-  api.events.on('boop', async (data: OnBoopData) => {
-    await api.rooms.join(data);
+  api.events.on('boop', async ({ roomId }: OnBoopData) => {
+    await api.rooms.join({ roomId });
   });
 
   let friendList = await api.friends.listFriends();
 
   for (let requestedUser of friendList.requests) {
-    await new Promise(res => setTimeout(res, 5000));
     await api.friends.confirmFriend(requestedUser.id);
   }
-
-  // await api.actions.updateStatusText('');
-  // await api.actions.updateColor('FFFFFF');
-  // await api.actions.muteSelf();
-  // await api.actions.unmuteSelf();
 }
 
 main();

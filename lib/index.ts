@@ -11,7 +11,7 @@ interface ClientArgs {
   roomId: number;
 }
 
-let createApiClient = async (roomId: number, args?: ClientArgs) => {
+let createApiClient = async (roomId?: number, args?: ClientArgs) => {
   args ??= {
     authToken: process.env.AUTH_TOKEN!,
     clientName: process.env.CLIENT_NAME!,

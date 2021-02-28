@@ -71,7 +71,7 @@ interface Room {
   isPrivate: boolean;
   canModifyDroppables: boolean;
   droppablesModificationPermission: 'everyone' | 'creator_only';
-  headerImageUrl: unknown;
+  headerImageUrl?: string;
 }
 
 interface CreateRoomResponse {
@@ -81,7 +81,7 @@ interface CreateRoomResponse {
     creatorId: number;
     isPublic?: null;
     organizationId?: unknown;
-    headerImageUrl?: unknown;
+    headerImageUrl?: string;
     isDefault: boolean;
     createdAt: string;
     updatedAt: string;
@@ -138,7 +138,7 @@ interface User {
     y: number;
   },
   moveId?: number;
-  role?: 'creator' | unknown; // Todo
+  role?: 'creator'; // Todo
 }
 
 interface UserRelationship {
