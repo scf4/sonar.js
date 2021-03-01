@@ -42,4 +42,3 @@ let checkArgs = (args: ClientArgs) => {
 };
 
 export { createApiClient };
-
