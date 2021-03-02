@@ -9,7 +9,6 @@
   "engines": {
     "node": ">= 14"
   },
-  "private": true,
   "scripts": {
     "build": "tsc",
     "dev": "yarn run nodemon --exec 'ts-node -r tsconfig-paths/register --files lib/examples'"
