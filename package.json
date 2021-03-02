@@ -1,8 +1,10 @@
 {
-  "name": "sonarjs",
-  "version": "0.1.1",
+  "name": "@sonar-tools/sonar.js",
+  "version": "0.1.2",
   "main": "build/client",
-  "author": "@scottinallcaps",
+  "author": "@sonar-tools",
+  "contributors": ["@scf4"],
+  "repository": "git://github.com/sonar-tools/sonar.js.git",
   "license": "none",
   "engines": {
     "node": ">= 14"
