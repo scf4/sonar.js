@@ -74,6 +74,10 @@ interface Room {
   headerImageUrl?: string;
 }
 
+interface SearchUsersResponse {
+  users: User[];
+}
+
 interface CreateRoomResponse {
   room: {
     id: number;
@@ -122,23 +126,23 @@ interface Droppable {
 }
 
 interface User {
-  id: number;
-  username: string;
-  statusText?: string;
-  isSelfMuted?: boolean;
-  color: string;
+  id:              number;
+  username:        string;
+  color:           string;
+  colorValue:      number;
   moderationState: string;
-  profileImageUrl?: string;
-  colorValue: number;
-  isOnline?: boolean;
-  relationship?: UserRelationship;
-  currentRoomId?: number;
+  profileImageUrl: string;
+  currentRoomId:   number;
+  isOnline:        boolean;
+  relationship:    UserRelationship;
+
   position?: {
     x: number;
     y: number;
   },
+  
   moveId?: number;
-  role?: 'creator'; // Todo
+  role?: 'creator';
 }
 
 interface UserRelationship {

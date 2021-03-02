@@ -11,7 +11,7 @@ let getHeaders = () => {
     'User-Agent': `Sonar/${SONAR_BUILD} ${clientName}`,
     'Accept': '*/*',
     'Accept-Language': 'en-us',
-    'Accept-Encoding': 'gzip, deflate',
+    'Accept-Encoding': 'gzip, deflate, br',
     'Content-Type': 'application/json',
     'version': SONAR_VERSION,
     'build': SONAR_BUILD,

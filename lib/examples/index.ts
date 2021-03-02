@@ -24,6 +24,8 @@ async function main() {
 
   let { requests } = await api.friends.listFriends();
 
+
+
   for (let user of requests) {
     await api.friends.confirmFriend(user.id);
   }
