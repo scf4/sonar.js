@@ -24,10 +24,6 @@ export type ReceivedMessage =
 | { type: ReceivedMessageType.EntitiesChanged; data: ObjectChangedData }
 
 let handleMessage = async (msg: ReceivedMessage) => {
-  if (process.env.NODE_ENV !== 'production') {
-    console.log('[Received]: ' + JSON.stringify(msg));
-  }
-
   switch (msg.type) {
     case ReceivedMessageType.DisplayToast: {
       if (msg.data.message.includes('booped you')) handleBoop(msg.data);
