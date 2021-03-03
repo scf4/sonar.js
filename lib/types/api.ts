@@ -59,7 +59,14 @@ interface ListRoomsResponse {
     colors?: (string | null)[];
     isPrivate: boolean;
     isRemovable: boolean;
-  }>
+
+    roomParticipantPreviews: Array<{
+      color: string,
+      userId: number,
+      profileImageUrl: string;
+      colorValue: number;
+    }>;
+  }>;
 }
 
 interface Room {
@@ -126,27 +133,27 @@ interface Droppable {
 }
 
 interface User {
-  id:              number;
-  username:        string;
-  color:           string;
-  colorValue:      number;
+  id: number;
+  username: string;
+  color: string;
+  colorValue: number;
   moderationState: string;
   profileImageUrl: string;
-  currentRoomId:   number;
-  isOnline:        boolean;
-  relationship:    UserRelationship;
+  currentRoomId: number;
+  isOnline: boolean;
+  relationship: UserRelationship;
 
   position?: {
     x: number;
     y: number;
   },
-  
+
   moveId?: number;
   role?: 'creator';
 }
 
 interface UserRelationship {
-  friendshipStatus: 'friends' | 'needs_approval' | 'not_friends' | 'request_sent'; 
+  friendshipStatus: 'friends' | 'needs_approval' | 'not_friends' | 'request_sent';
   isMuted: boolean;
   isBlocking: boolean;
   isBlockedBy: boolean;
