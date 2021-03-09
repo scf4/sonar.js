@@ -1,38 +1,39 @@
 import axios from 'axios';
 import { camelizeKeysInPlace, decamelizeKeysInPlace } from 'fast-case';
-import { getState } from 'lib/state';
-import { HTTPS_URL, SONAR_BUILD, SONAR_VERSION } from 'lib/constants';
-import { platform } from 'utils/platform';
+import { HTTPS_URL, HTTPS_URL_V2, SONAR_BUILD, SONAR_VERSION } from 'lib/constants';
+import { getClientHeaders } from './auth';
 
-let getHeaders = () => {
-  let { clientName, authToken } = getState();
+let defaultHeaders = {
+  'Accept': '*/*',
+  'Accept-Language': 'en-us',
+  'Accept-Encoding': 'gzip, deflate, br',
+  'Content-Type': 'application/json',
+  'version': SONAR_VERSION,
+  'build': SONAR_BUILD,
+  ...getClientHeaders(),
+};
 
-  return {
-    'User-Agent': `Sonar/${SONAR_BUILD} ${clientName}`,
-    'Accept': '*/*',
-    'Accept-Language': 'en-us',
-    'Accept-Encoding': 'gzip, deflate, br',
-    'Content-Type': 'application/json',
-    'version': SONAR_VERSION,
-    'build': SONAR_BUILD,
-    'platform': platform,
-    'device-name': clientName,
-    'device-id': clientName,
-    'Authorization': authToken,
+let createAxiosInstance = (baseUrl = HTTPS_URL) =>
+  axios.create({
+    baseURL: baseUrl,
+    responseType: 'json',
+    headers: defaultHeaders,
+    transformRequest: (data, _headers) => decamelizeKeysInPlace(data),
+    transformResponse: body => camelizeKeysInPlace(JSON.parse(body).data),
+  });
+
+let request = createAxiosInstance(HTTPS_URL);
+let request2 = createAxiosInstance(HTTPS_URL_V2);
+
+[request, request2].forEach(req => req.interceptors.request.use(config => {
+  config.headers = {
+    ...config.headers,
   };
+  return config;
+}));
+
+export {
+  defaultHeaders,
+  request,
+  request2,
 };
-
-let request = axios.create({
-  baseURL: HTTPS_URL,
-  method: 'GET',
-  responseType: 'json',
-  headers: getHeaders(),
-  transformRequest: (data) => decamelizeKeysInPlace(data),
-  transformResponse: (data) => camelizeKeysInPlace(JSON.parse(data).data),
-});
-
-let updateHeaders = () => {
-  request.defaults.headers = getHeaders();
-};
-
-export { request, getHeaders, updateHeaders };

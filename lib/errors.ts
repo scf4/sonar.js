@@ -1,14 +1,19 @@
-let createError = (message?: string) => () => {
+let createError = (...errors: (string | Error | undefined)[]) => {
+  let message = errors
+    .map(e => e?.toString())
+    .filter(e => !!e)
+    .join('\n');
   throw new Error(message);
 };
 
-export let ClientArgsMissingError = (args: string) => createError(`Missing client args: ${args}`);
-export let StateCheckCallError = createError('State check failed');
-export let UnauthenticatedError = createError('Not logged in');
+export let StateCheckCallError = (state: string, msg?: string) => createError(`State check error: ${state}`, msg);
+export let UnauthenticatedError = () => createError('Not logged in');
+export let NoUserIdError = () => createError('No user ID in data store');
 
-export let WebSocketDoesntExistError = createError('No WebSocket instance exists');
-export let WebSocketNotOpenError = createError('WebSocket isn\'t open');
-export let WebSocketDidntConnectError = createError('WebSocket didn\t connect');
+export let WebSocketDoesntExistError = () => createError('No WebSocket instance was created');
+export let WebSocketNotOpenError = () => createError('WebSocket isn\'t open');
+export let WebSocketDidntConnectError = () => createError('WebSocket didn\t connect');
 
-export let NoUserIdError = createError('No user ID in data store');
-export let UnexpectedError = (error: string | Error) => createError(`Error: ${error}`);
+export let UnexpectedError = (msg: string, err?: Error) => createError(`Unexpected error: ${msg}`, err);
+
+export let ClientArgMissingError = (arg: string) => createError(`Missing client args: ${arg}`);

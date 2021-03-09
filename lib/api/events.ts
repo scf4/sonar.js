@@ -1,17 +1,19 @@
-type EventHandler<Data> = (data: Data) => Promise<void> | void;
+import EventEmitter from 'node:events';
+import TypedEmitter from 'typed-emitter';
 
-export default class EventManager {
-  #events = {};
-  
-  publish = async <T>(eventName: EventName, data?: T) =>
-    this.#events[eventName]?.(data);
-
-  on = <T>(eventName: EventName, handler: EventHandler<T>) =>
-    this.#events[eventName] = handler;
+interface GameMessageEvent {
+  join_room: (data: JoinRoomPayload) => void;
+  boop: (data: BoopPayload) => void;
+  friend_request: (data: FriendRequest) => void;
+  user_join: (data: User) => void;
+  user_leave: (data: User) => void;
+  user_move: (data: User) => void;
+  user_text: (data: User) => void;
+  user_horn: (data: User) => void;
+  user_self_mute: (data: User) => void;
+  user_self_unmute: (data: User) => void;
 }
 
-let events = new EventManager();
+let events: TypedEmitter<GameMessageEvent> = new EventEmitter();
 
-export {
-  events,
-};
+export default events;

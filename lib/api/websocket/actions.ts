@@ -1,25 +1,29 @@
+import { UnexpectedError } from 'lib/errors';
 import { getState, updateState } from 'lib/state';
-import { generateId } from 'utils/generateId';
-import { dispatchAction } from './send-message';
+import { generateUniqueSonarId } from 'utils/uid';
+import { sendAction } from './send-message';
 
-let horn = () => dispatchAction('horn');
-let muteSelf = () => dispatchAction('is_self_muted_update', { isSelfMuted: true });
-let unmuteSelf = () => dispatchAction('is_self_muted_update', { isSelfMuted: false });
+let horn = () => sendAction('horn');
 
-let move = (x: number, y: number) => {
+let muteSelf = () => sendAction('is_self_muted_update', { isSelfMuted: true });
+
+let unmuteSelf = () => sendAction('is_self_muted_update', { isSelfMuted: false });
+
+let move = async (x: number, y: number) => {
   updateState(state => {
-    if (!state.currentRoom) return;
+    if (!state.currentRoom) throw UnexpectedError('No current room');
     state.currentRoom.x = x;
     state.currentRoom.y = y;
   });
   
-  let moveId = updateState(state => state.moveId! += 1).moveId!; 
+  let moveId = updateState(state => state.moveId += 1).moveId!; 
 
-  return dispatchAction('move', { x, y, moveId });
+  sendAction('move', { x, y, moveId });
 };
 
-let updateStatusText = (statusText: string) => dispatchAction('status_text_update', { statusText });
-let updateColor = (color: string) => dispatchAction('color_update', { color });
+let updateStatusText = (statusText: string) => sendAction('status_text_update', { statusText });
+
+let updateColor = (color: string) => sendAction('color_update', { color });
 
 let dropItem = (name: string, x?: number, y?: number) => {
   let { currentRoom } = getState();
@@ -28,15 +32,13 @@ let dropItem = (name: string, x?: number, y?: number) => {
   x ??= currentRoom?.x ?? 0;
   y ??= currentRoom?.y ?? 0;
 
-  return dispatchAction('drop_droppable', { 
+  return sendAction('drop_droppable', { 
     name, 
-    clientGeneratedId: generateId(),
+    clientGeneratedId: generateUniqueSonarId(),
     desiredX: x!, 
     desiredY: y!, 
   });
 };
-
-let closeWebsocket = (reason = 'join_room') => dispatchAction('close_websocket', { reason });
 
 export {
   horn,
@@ -46,5 +48,4 @@ export {
   muteSelf,
   unmuteSelf,
   dropItem,
-  closeWebsocket,
 };

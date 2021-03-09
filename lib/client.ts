@@ -1,44 +1,39 @@
 require('dotenv/config');
 
 import * as api from './api';
-import { updateHeaders } from './api/request';
-import { ClientArgsMissingError } from './errors';
+import { setAuthData } from './api/auth';
+import { ClientArgMissingError } from './errors';
 import { updateState } from './state';
 
 interface ClientArgs {
   authToken: string;
   clientName: string;
   userId: number;
-  roomId: number;
+  roomId: number
 }
 
-let createApiClient = async (roomId?: number, args?: ClientArgs) => {
-  args ??= {
-    authToken: process.env.AUTH_TOKEN!,
-    clientName: process.env.CLIENT_NAME!,
-    userId: Number(process.env.USER_ID),
-    roomId: roomId ?? Number(process.env.ROOM_ID),
-  };
+let createApiClient = async (args?: Partial<ClientArgs>, CreateWebSocket = true) => {
+  updateState(state => {
+    state.userId ??= args?.userId ?? Number(process.env.USER_ID);
+    state.initialRoomId ??= args?.roomId ?? Number(process.env.ROOM_ID);
+  });
 
-  checkArgs(args);
-  updateState(state => Object.assign(state, args));
-  updateHeaders();
-
+  setAuthData(store => {
+    store.authToken ??= args?.authToken ?? ClientArgMissingError('authToken');
+    store.clientName ??= args?.clientName ?? ClientArgMissingError('clientName');
+  });
+  
   await api.launch.stateCheck();
   await api.launch.loadAssets();
   
-  api.rooms.join({ roomId: args.roomId });
+  // Open websocket connection and join room
+  if (CreateWebSocket) {
+    await api.rooms.join({ roomId: args?.roomId });
+  }
   
   return api;
 };
 
-let checkArgs = (args: ClientArgs) => {
-  let argsArray = ['authToken', 'clientName', 'userId', 'roomId'];
-  let missingArgs = argsArray.filter(key => !Object.keys(args).includes(key));
-
-  if (missingArgs.length) {
-    throw ClientArgsMissingError(missingArgs.join(', '));
-  }
+export {
+  createApiClient,
 };
-
-export { createApiClient };

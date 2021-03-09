@@ -1,16 +1,27 @@
-import { request } from 'lib/api/request';
+import { SONAR_BUILD } from "lib/constants";
+import { platform } from "lib/utils/platform";
+import { ClientArgMissingError } from "lib/errors";
 
-let smsVerification = (number: string) =>
-  request.post('/users/sms-verification', { number });
+let authData = {
+  clientName: process.env.CLIENT_NAME!,
+  authToken: process.env.AUTH_TOKEN!,
+};
 
-let codeVerification = (number: string, code: string) =>
-  request.post<AuthVerificationResponse>('/users/code-verification', { number, code });
+let setAuthData = (callback: (data: typeof authData) => void) => {
+  callback(authData);
+  if (!authData.clientName) throw ClientArgMissingError('clientName');
+  if (!authData.authToken) throw ClientArgMissingError('authToken');
+}
 
-let verifyInvite = (code: string) =>
-  request.post<AuthVerificationResponse>('/invites/verify', { code });
+let getClientHeaders = () => ({
+  'Authorization': authData.authToken,
+  'device-name': authData.clientName,
+  'device-id': authData.clientName,
+  'User-Agent': `Sonar/${SONAR_BUILD} ${authData.clientName} (${platform})`,
+  'platform': platform,
+});
 
 export {
-  smsVerification,
-  codeVerification,
-  verifyInvite,
+  setAuthData,
+  getClientHeaders,
 };

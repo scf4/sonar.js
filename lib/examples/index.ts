@@ -3,9 +3,10 @@ import { createApiClient } from 'lib/client';
 import { getState } from 'lib/state';
 
 async function main() {
+  console.log('Started...');
   let api = await createApiClient();
 
-  api.events.on('join_room', () => {
+  api.events.on('join_room', () => {    
     let objects = getState().currentRoom?.entities;
     let grid = new Array(31).fill(null).map(() => new Array(31).fill(null));
 
@@ -18,24 +19,15 @@ async function main() {
     grid = rotate270(grid);
   });
 
-  api.events.on('boop', ({ roomId }: BoopData) => {
+  api.events.on('boop', ({ roomId }) => {
     api.rooms.join({ roomId });
   });
 
-  let { requests } = await api.friends.listFriends();
-
-
+  let requests = await api.friends.requests();
 
   for (let user of requests) {
-    await api.friends.confirmFriend(user.id);
+    await api.friends.confirm(user.id);
   }
 }
 
 main();
-
-// enum Room {
-//   Lobby = 122,
-//   SonarArena = 3398,
-//   SonargramHome = 5028,
-//   ScottSonargramRoom = 12326,
-// }

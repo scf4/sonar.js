@@ -4,16 +4,12 @@ interface StateCheckResponse {
 }
 
 interface AssetsResponse {
-  droppables: Record<string, Droppable>;
   emojiMappings: Emoji[];
   imageUrls: string[];
   soundUrls: string[];
+  droppables: Record<string, Droppable>;
   strings: [];
   hash: string;
-}
-
-type Assets = Omit<AssetsResponse, 'droppables'> & {
-  droppables: Map<string, Droppable>;
 }
 
 interface AuthVerificationResponse {
@@ -69,20 +65,12 @@ interface ListRoomsResponse {
   }>;
 }
 
-interface Room {
-  id: number;
-  name: string;
-  height: number;
-  width: number;
-  creatorId: number;
-  isPrivate: boolean;
-  canModifyDroppables: boolean;
-  droppablesModificationPermission: 'everyone' | 'creator_only';
-  headerImageUrl?: string;
-}
-
-interface SearchUsersResponse {
-  users: User[];
+interface GetRoomResponse {
+  creator:    User | null;
+  moderators: User[];
+  members:    User[];
+  banned:     any[];
+  isPrivate:  boolean;
 }
 
 interface CreateRoomResponse {
@@ -115,14 +103,11 @@ interface FriendRequest {
 interface Droppable {
   id: string;
   creatorId: number;
-  last_actorId: number;
+  lastActorId: number;
   orderId: 0;
   type: 'landmark' | '';
   name: string;
-  position: {
-    x: number;
-    y: number;
-  },
+  position: { x: number; y: number }
   imageUrl: string;
   soundUrl: Maybe<string>;
   expiration: null;
@@ -137,19 +122,17 @@ interface User {
   username: string;
   color: string;
   colorValue: number;
-  moderationState: string;
-  profileImageUrl: string;
-  currentRoomId: number;
+  moderationState?: Maybe<'none' | 'moderator'>;
+  profileImageUrl?: Maybe<string>;
+  currentRoomId?: Maybe<number>;
   isOnline: boolean;
   relationship: UserRelationship;
+}
 
-  position?: {
-    x: number;
-    y: number;
-  },
-
-  moveId?: number;
-  role?: 'creator';
+interface RoomUser extends User {
+  role: 'member' | 'moderator' | 'creator';
+  position: { x: number; y: number };
+  moveId: number;
 }
 
 interface UserRelationship {
@@ -157,19 +140,69 @@ interface UserRelationship {
   isMuted: boolean;
   isBlocking: boolean;
   isBlockedBy: boolean;
-  notificationSetting: string;
+  notificationSetting: NotificationSetting
+}
+
+type NotificationSetting = 'always' | 'occasionally' | 'never';
+
+interface UserItemsResponse {
+  invitation: {
+    imageUrl: string;
+    title: string;
+  };
+  badges: Array<{
+    imageUrl: string;
+    title: string;
+    description: string;
+    highlightedDescriptionTerms: string[];
+  }>;
+  addSocials?: {
+    imageUrl: string;
+    title: string;
+    options: Array<{
+      imageUrl: string;
+      title: string;
+      network: string;
+      displayName: string;
+    }>;
+  };
+  socials: unknown[];
 }
 
 interface GameData {
-  users: User[];
+  users: RoomUser[];
   objects: Droppable[];
 }
 
-interface SpaceJoinedData {
-  data: Room;
-  startingMoveId: number;
-  isRejoin: boolean;
-  gameData: GameData;
+interface Room {
+  id: number;
+  name: string;
+  creatorId: number;
+  canModifyDroppables: boolean;
+  droppablesModificationPermission: 'everyone' | 'creator_only';
+  width: number;
+  height: number;
+  isPrivate: boolean;
+}
+
+interface Room {
+  id: number;
+  name: string;
+  canModifyDroppables: Maybe<boolean>;
+  droppablesModificationPermission: Maybe<boolean>;
+  width: Maybe<number>;
+  height: Maybe<number>;
+  isPrivate: Maybe<boolean>;
+}
+
+interface BroadcastSpeakingData {
+  type: string;
+  requestId?: string | '';
+  data: {
+    userId: number;
+    roomId: number;
+    volume: number;
+  }
 }
 
 interface UserChangedData {
@@ -183,9 +216,20 @@ interface ObjectChangedData {
 }
 
 interface DisplayToastData {
-  type: 'message',
   message: string;
-  highlightedText: [username: string, roomName: string];
-  senderRoomId: number | null;
-  userId: null;
+  highlightedText: string[];
+  userId: Maybe<number>;
+  senderRoomId: Maybe<number>;
+  type: 'message',
+}
+
+interface SpaceJoinedData {
+  data: Room;
+  startingMoveId: number;
+  isRejoin: boolean;
+  gameData: GameData;
+}
+
+interface SearchUsersResponse {
+  users: User[];
 }
