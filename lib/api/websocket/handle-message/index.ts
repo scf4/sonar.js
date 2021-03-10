@@ -61,30 +61,30 @@ let handleBoop = ({ senderRoomId: roomId, highlightedText }: DisplayToastData) =
 };
 
 
-let handleJoinRoom = (msg: SpaceJoinedData) => {
-  if (!msg) return;
-
-  let user = msg.gameData.users.find(u => u.id === getState().userId) ?? NoUserIdError();
+let handleJoinRoom = (data: SpaceJoinedData) => {
+  let user = data.gameData.users.find(u => u.id === getState().userId) ?? NoUserIdError();
   let x = user.position!.x;
   let y = user.position!.y;
-  let moveId = user?.moveId;
+  let moveId = user.moveId;
+  let roomId = data.room.id;
 
-  let entities = msg.gameData.objects;
+  let entities = data.gameData.objects;
 
   updateState(state => state.currentRoom = {
-    data: msg.data,
+    id: data.room.id,
+    data: data.room,
     entities,
     x,
     y,
   });
 
-  updateState(state => state.moveId = moveId!);
+  updateState(state => state.moveId = moveId);
+  updateState(state => state.roomId = roomId);
   
-  let id = msg.data.id;
-  let { objects, users } = msg.gameData;
+  let { objects, users } = data.gameData;
 
   events.emit('join_room', {
-    id,
+    id: roomId,
     users,
     objects,
   });

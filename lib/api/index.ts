@@ -8,8 +8,10 @@ export * as rooms from './endpoints/rooms';
 export * as users from './endpoints/users';
 export { default as events } from './events';
 
-let shutdown = () => getState().ws?.close();
+let shutdown = () => {
+  getState().ws?.close(1000);
+  getState().ws?.terminate();
+};
 
 process.on('SIGTERM', shutdown);
 process.on('SIGINT', shutdown);
-process.on('uncaughtException', shutdown);

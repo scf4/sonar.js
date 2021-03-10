@@ -3,7 +3,7 @@ require('dotenv/config');
 import * as api from './api';
 import { setAuthData } from './api/auth';
 import { ClientArgMissingError } from './errors';
-import { updateState } from './state';
+import { getState, updateState } from './state';
 
 interface ClientArgs {
   authToken: string;
@@ -12,10 +12,11 @@ interface ClientArgs {
   roomId: number
 }
 
-let createApiClient = async (args?: Partial<ClientArgs>, CreateWebSocket = true) => {
+let createApiClient = async (args?: Partial<ClientArgs>, createWebSocket = true) => {
   updateState(state => {
     state.userId ??= args?.userId ?? Number(process.env.USER_ID);
     state.initialRoomId ??= args?.roomId ?? Number(process.env.ROOM_ID);
+    state.roomId ??= state.initialRoomId;
   });
 
   setAuthData(store => {
@@ -27,8 +28,9 @@ let createApiClient = async (args?: Partial<ClientArgs>, CreateWebSocket = true)
   await api.launch.loadAssets();
   
   // Open websocket connection and join room
-  if (CreateWebSocket) {
-    await api.rooms.join({ roomId: args?.roomId });
+  if (createWebSocket) {
+    let roomId = getState().initialRoomId;
+    void api.rooms.join({ roomId });
   }
   
   return api;

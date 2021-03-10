@@ -1,9 +1,9 @@
 import axios from 'axios';
-import { camelizeKeysInPlace, decamelizeKeysInPlace } from 'fast-case';
+import { camelizeKeysInPlace, decamelizeKeys } from 'fast-case';
 import { HTTPS_URL, HTTPS_URL_V2, SONAR_BUILD, SONAR_VERSION } from 'lib/constants';
 import { getClientHeaders } from './auth';
 
-let defaultHeaders = {
+let getHeaders = () => ({
   'Accept': '*/*',
   'Accept-Language': 'en-us',
   'Accept-Encoding': 'gzip, deflate, br',
@@ -11,29 +11,22 @@ let defaultHeaders = {
   'version': SONAR_VERSION,
   'build': SONAR_BUILD,
   ...getClientHeaders(),
-};
+});
 
 let createAxiosInstance = (baseUrl = HTTPS_URL) =>
   axios.create({
     baseURL: baseUrl,
     responseType: 'json',
-    headers: defaultHeaders,
-    transformRequest: (data, _headers) => decamelizeKeysInPlace(data),
-    transformResponse: body => camelizeKeysInPlace(JSON.parse(body).data),
+    headers: getHeaders(),
+    transformRequest: data => JSON.stringify(decamelizeKeys(data)),
+    transformResponse: body => body && camelizeKeysInPlace(JSON.parse(body).data),
   });
 
 let request = createAxiosInstance(HTTPS_URL);
 let request2 = createAxiosInstance(HTTPS_URL_V2);
 
-[request, request2].forEach(req => req.interceptors.request.use(config => {
-  config.headers = {
-    ...config.headers,
-  };
-  return config;
-}));
-
 export {
-  defaultHeaders,
+  getHeaders,
   request,
   request2,
 };

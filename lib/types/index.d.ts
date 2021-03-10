@@ -224,7 +224,7 @@ interface DisplayToastData {
 }
 
 interface SpaceJoinedData {
-  data: Room;
+  room: Room;
   startingMoveId: number;
   isRejoin: boolean;
   gameData: GameData;

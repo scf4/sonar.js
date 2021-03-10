@@ -1,7 +1,7 @@
 {
   "name": "@sonar-tools/sonar.js",
   "version": "0.1.0-alpha.0",
-  "main": "build/examples",
+  "main": "build/index.js",
   "author": "@sonar-tools",
   "contributors": [
     "@scf4"
@@ -12,9 +12,7 @@
     "node": ">= 14"
   },
   "scripts": {
-    "build": "rm -rf ./build && tsc",
-    "dev": "tsc-watch --outDir ./tmp-build --onSuccess 'node ./tmp-build/examples'",
-    "start": "node ./build/examples"
+    "build": "ts-patch install && tsc"
   },
   "dependencies": {
     "2d-array-rotation": "2.1.1",
@@ -22,6 +20,7 @@
     "dotenv": "8.2.0",
     "fast-case": "1.6.0",
     "lodash": "4.17.21",
+    "ts-node": "^9.1.1",
     "tsc-watch": "^4.2.9",
     "ws": "7.4.4"
   },

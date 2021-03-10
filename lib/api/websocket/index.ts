@@ -2,11 +2,11 @@ import WebSocket from 'ws';
 import { encode } from 'querystring';
 import { camelizeKeysInPlace, decamelizeKeys } from 'fast-case';
 
-import { defaultHeaders } from 'lib/api/request';
+import { getHeaders } from 'lib/api/request';
 import { WSS_URL } from 'lib/constants';
 import { updateState, getState } from 'lib/state';
-import { handleMessage, ReceivedMessage } from './handle-message';
 import * as actions from './actions';
+import { handleMessage, ReceivedMessage } from './handle-message';
 
 type Params = {
   roomId?: number;
@@ -16,8 +16,8 @@ type Params = {
 };
 
 let createWebSocket = async (args: Params = {}) => {
-  args.viewportWidth ??= 32;
-  args.viewportHeight ??= 32;
+  args.viewportWidth ??= 31;
+  args.viewportHeight ??= 31;
   args.joinSilently ??= true;
 
   if (getState().ws?.readyState === WebSocket.OPEN) {
@@ -28,19 +28,20 @@ let createWebSocket = async (args: Params = {}) => {
   let queryString = encode(decamelizeKeys(args));
   let url = WSS_URL + '/join-room?' + queryString;
 
-  // Create WebSocket
-  let ws = new WebSocket(url, { headers: defaultHeaders });
+  console.log(url);
 
-  ws.addEventListener('message', (raw) => {
-    let json = raw.data.toString();
-    let message: ReceivedMessage = JSON.parse(json);
-    camelizeKeysInPlace(message);
-    handleMessage(message);
+  // Create websocket
+  let ws = new WebSocket(url, { headers: getHeaders() });
+
+  ws.addEventListener('message', msg => {
+    let data: ReceivedMessage = JSON.parse(msg.data);
+    camelizeKeysInPlace(data);
+    handleMessage(data);
   });
 
-  ws.addEventListener('close', ({ code, reason }) => {
+  ws.addEventListener('close', ({ wasClean, code, reason }) => {
     updateState(state => state.wsStatus = ws.readyState);
-    console.warn('Websocket closed:' + JSON.stringify({ code, reason }));
+    console.warn('Websocket closed:' + JSON.stringify({ code, reason, wasClean }));
   });
 
   ws.addEventListener('error', ({ error, message, type }) => {
@@ -56,6 +57,7 @@ let createWebSocket = async (args: Params = {}) => {
 
     ws.addEventListener('open', () => {
       updateState(state => state.wsStatus = ws.readyState);
+      // ws.send('Ping');
       resolve();
       ws.removeEventListener('open');
     });  

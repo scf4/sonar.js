@@ -1,18 +1,18 @@
-import * as state from 'lib/state';
+import { getState } from 'lib/state';
 import { request, request2 } from 'lib/api/request';
 import { createWebSocket } from 'lib/api/websocket';
 
-let current = () => state.getState()?.currentRoom ?? null;
+let current = () => getState()?.currentRoom ?? null;
 
 let join = createWebSocket;
 
 let list = () => request
   .get<ListRoomsResponse>('/rooms')
-  .then(({ data }) => data.rooms);
+  .then(res => res.data.rooms);
 
 let create = () => request
   .post<CreateRoomResponse>('/rooms')
-  .then(({ data }) => data.room);
+  .then(res => res.data.room);
 
 let rename = (roomId: number, name: string) => request
   .patch(`/rooms/${roomId}`, { name });

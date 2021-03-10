@@ -6,9 +6,12 @@ interface State {
 
   initialRoomId?: number;
   userId: number;
+  
+  roomId: Maybe<number>;
   moveId: number;
 
   currentRoom?: {
+    id: number;
     x: number;
     y: number;
     data: Room;
