@@ -4,6 +4,7 @@ import { Assets, CurrentRoom } from 'lib/types/sonar-types';
 interface State {
   ws: Maybe<WebSocket>;
   wsStatus: number;
+  retryCount: number;
 
   initialRoomId?: number;
   userId: number;
@@ -26,6 +27,7 @@ interface State {
 let globalState = {
   ws: null,
   wsStatus: 0,
+  retryCount: 0,
 
   friends: new Set(),
   friendRequests: new Set(),

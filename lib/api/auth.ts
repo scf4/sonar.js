@@ -1,10 +1,10 @@
-import { SONAR_BUILD } from "lib/constants";
-import { platform } from "lib/utils/platform";
-import { ClientArgMissingError } from "lib/errors";
+import { SONAR_BUILD } from 'lib/constants';
+import { platform } from 'lib/utils/platform';
+import { ClientArgMissingError } from 'lib/errors';
 
 let authData = {
-  clientName: process.env.CLIENT_NAME!,
-  authToken: process.env.AUTH_TOKEN!,
+  clientName: process.env.CLIENT_NAME,
+  authToken: process.env.AUTH_TOKEN,
 };
 
 let setAuthData = (callback: (data: typeof authData) => void) => {

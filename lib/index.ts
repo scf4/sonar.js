@@ -1,4 +1,7 @@
 require('dotenv/config');
 
-export * from './api';
-export { createApiClient as default } from './client';
+import './api';
+import './state';
+
+export * from './types/sonar-types';
+export * from './client';

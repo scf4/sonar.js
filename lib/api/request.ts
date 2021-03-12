@@ -18,15 +18,16 @@ let createAxiosInstance = (baseUrl = HTTPS_URL) =>
     baseURL: baseUrl,
     responseType: 'json',
     headers: getHeaders(),
-    transformRequest: data => JSON.stringify(decamelizeKeys(data)),
-    transformResponse: body => body && camelizeKeysInPlace(JSON.parse(body).data),
+    transformRequest: body => JSON.stringify(decamelizeKeys(body)),
+    transformResponse: body => !!body && camelizeKeysInPlace(JSON.parse(body).data),
   });
 
-let request = createAxiosInstance(HTTPS_URL);
-let request2 = createAxiosInstance(HTTPS_URL_V2);
+let req1 = createAxiosInstance(HTTPS_URL);
+let req2 = createAxiosInstance(HTTPS_URL_V2);
 
 export {
   getHeaders,
-  request,
-  request2,
+  req1,
+  req2,
 };
+

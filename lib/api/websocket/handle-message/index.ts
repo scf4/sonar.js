@@ -34,9 +34,13 @@ export type ReceivedMessage =
 | { type: ReceivedMessageType.EntitiesChanged, data: ObjectChangedData }
 
 function handleMessage(msg: ReceivedMessage): any {
+  if (process.env.NODE_ENV !== 'development') {
+    // console.log(JSON.stringify(msg));
+  }
+
   switch (msg.type) {
     case ReceivedMessageType.DisplayToast: {
-      if (msg.data.message.includes('booped you')) return handleBoop(msg.data);
+      if (msg.data.message.includes('invited you to')) return handleBoop(msg.data);
       return;
     }
 
@@ -46,19 +50,18 @@ function handleMessage(msg: ReceivedMessage): any {
       let dot = msg.data.users?.[0];
       let object = msg.data.objects?.[0];
       if (dot) { /* handleDotChange */ }
-      if (object) { console.log(JSON.stringify(object)); /* handleObjectChange */ }
+      if (object) { /* console.log(JSON.stringify(object)); */ /* handleObjectChange */ }
       return;
     }
   };
 }
 
 let handleBoop = ({ senderRoomId: roomId, highlightedText }: DisplayToastData) => {
-  if (!roomId)
-    return;
+  if (!roomId) return;
 
   let [username, roomName] = highlightedText;
 
-  username = username?.replace('@', '') ?? null;
+  username = username.replace('@', '') ?? null;
 
   events.emit('boop', {
     roomId,
@@ -67,7 +70,6 @@ let handleBoop = ({ senderRoomId: roomId, highlightedText }: DisplayToastData) =
   });
 };
 
-
 let handleJoinRoom = (data: SpaceJoinedData) => {
   let user = data.gameData.users.find(u => u.id === getState().userId) ?? NoUserIdError();
   let x = user.position!.x;
@@ -75,12 +77,10 @@ let handleJoinRoom = (data: SpaceJoinedData) => {
   let moveId = user.moveId;
 
   let { objects, users } = data.gameData;
+  
   updateState(state => state.room = {
     ...data.room,
-    entities: {
-      objects,
-      users,
-    },
+    entities: { objects, users },
     position: { x, y },
   });
 

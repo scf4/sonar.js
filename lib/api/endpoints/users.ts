@@ -1,25 +1,30 @@
-import { request } from 'lib/api/request';
-import { SearchUsersResponse, UserItemsResponse, NotificationSetting } from 'lib/types/sonar-types';
+import { NotificationSetting, User, UserItemsResponse } from "lib/types/sonar-types";
+import { req1, req2 } from "../request";
 
-let search = (usernames: string[]) => request
-  .post<SearchUsersResponse>('/users/search', { usernames })
-  .then(res => res.data.users);
-
-let items = (userId: number) => request
-  .post<UserItemsResponse>('/users/items', { userId })
+let search = (query: string) =>
+  req2.post<{ data: User[] }>('/search/users?query=' + query)
   .then(res => res.data);
 
-let mute = (userId: number) => request
-  .post(`/mutes/${userId}`);
+let items = (userId: number) =>
+  req1.post<UserItemsResponse>('/users/items', { userId })
+  .then(res => res.data);
 
-let unmute = (userId: number) => request
-  .delete(`/mutes/${userId}`);
+let mute = (userId: number) =>
+  req1.post<void>(`/mutes/${userId}`);
 
-let setNotificationSetting = (userId: number, notificationSetting: NotificationSetting) => request
-  .post(`/notifs/modify-user-setting`, { userId, notificationSetting });
+let unmute = (userId: number) =>
+  req1.delete<void>(`/mutes/${userId}`);
 
-export {
+let setNotificationSetting = (userId: number, notificationSetting: NotificationSetting) =>
+  req1.post<void>(`/notifs/modify-user-setting`, { userId, notificationSetting });
+
+let findByNames = (usernames: string[]) =>
+  req1.post<{ users: User[] }>('/users/search', { usernames })
+  .then(res => res.data.users);
+
+export {  
   search,
+  findByNames,
   items,
   mute,
   unmute,

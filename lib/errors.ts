@@ -14,6 +14,7 @@ export let WebSocketDoesntExistError = () => createError('No WebSocket instance 
 export let WebSocketNotOpenError = () => createError('WebSocket isn\'t open');
 export let WebSocketDidntConnectError = () => createError('WebSocket didn\t connect');
 
-export let UnexpectedError = (msg: string, err?: Error) => createError(`Unexpected error: ${msg}`, err);
+export let LocalStateError = (msg: string, err?: Error) => createError(`Unexpected error: ${msg}`, err);
 
 export let ClientArgMissingError = (arg: string) => createError(`Missing client args: ${arg}`);
+export let CantAccessRoomError = () => createError('You don\'t have permission to access this room')

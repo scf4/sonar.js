@@ -9,7 +9,7 @@ export * as users from './endpoints/users';
 export { default as events } from './events';
 
 let shutdown = () => {
-  getState().ws?.close(1000);
+  getState().ws?.close(1001);
   getState().ws?.terminate();
 };
 

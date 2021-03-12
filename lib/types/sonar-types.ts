@@ -45,7 +45,7 @@ export interface AuthUser {
 }
 
 export interface ListRoomsResponse {
-  rooms: Array<{
+  rooms: {
     id: number;
     title: string;
     subtitle: string;
@@ -60,15 +60,15 @@ export interface ListRoomsResponse {
       profileImageUrl: string;
       colorValue: number;
     }>;
-  }>;
-}
+  }[];
+};
 
 export interface GetRoomResponse {
-  creator:    User | null;
+  creator: User | null;
   moderators: User[];
-  members:    User[];
-  banned:     any[];
-  isPrivate:  boolean;
+  members: User[];
+  banned: any[];
+  isPrivate: boolean;
 }
 
 export interface CreateRoomResponse {
@@ -78,7 +78,10 @@ export interface CreateRoomResponse {
     creatorId: number;
     isPublic?: null;
     organizationId?: unknown;
-    headerImageUrl?: string;
+    headerImageUrl: Maybe<string>;
+    isTutorialTemplate: boolean;
+    isLockedDown: boolean;
+    numOnlineUsers: number;
     isDefault: boolean;
     createdAt: string;
     updatedAt: string;
@@ -91,11 +94,15 @@ export interface ListFriendsResponse {
 }
 
 export interface FriendRequest {
-  id: number,
-  username: string,
-  color: string,
-  colorValue: number,
-  isOnline: boolean
+  id: number;
+  username: string;
+  color: string;
+  colorValue: number;
+  isOnline: boolean;
+}
+
+export interface FriendRequestResponse {
+  friendshipStatus?: 'request_sent'
 }
 
 export interface Droppable {
@@ -143,29 +150,48 @@ export interface UserRelationship {
 
 export type NotificationSetting = 'always' | 'occasionally' | 'never';
 
+export interface SpaceChangedData {
+  data: {};
+}
+
 export interface UserItemsResponse {
-  invitation: {
+  invitation: Maybe<{
     imageUrl: string;
     title: string;
-  };
+  }>;
   badges: Array<{
     imageUrl: string;
     title: string;
     description: string;
     highlightedDescriptionTerms: string[];
   }>;
-  addSocials?: {
+  addSocial: Maybe<{
     imageUrl: string;
-    title: string;
-    options: Array<{
+    title: 'Add Social';
+    options:  Array<{
       imageUrl: string;
       title: string;
       network: string;
       displayName: string;
     }>;
-  };
-  socials: unknown[];
+  }>;
+  socials: Array<{
+    imageUrl: string;
+    title: string;
+    link: string;
+    network: string;
+    username: string;
+    options: {
+      imageUrl: string;
+      title: string;
+      link: string;
+      network: SocialNetwork;
+      username: string;
+    }[];
+  }>;
 }
+
+export type SocialNetwork = 'instagram' | 'discord' | 'twitter' | 'snapchat' | 'tiktok';
 
 export interface GameData {
   users: RoomUser[];
@@ -227,8 +253,4 @@ export interface SpaceJoinedData {
   startingMoveId: number;
   isRejoin: boolean;
   gameData: GameData;
-}
-
-export interface SearchUsersResponse {
-  users: User[];
 }

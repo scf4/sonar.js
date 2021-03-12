@@ -12,11 +12,12 @@ interface ClientArgs {
   roomId: number
 }
 
-let createApiClient = async (args?: Partial<ClientArgs>, createWebSocket = true) => {
+export type Client = typeof api;
+
+let createClient = async (args?: Partial<ClientArgs>, createWebSocket = true): Promise<Client> => {
   updateState(state => {
     state.userId ??= args?.userId ?? Number(process.env.USER_ID);
     state.initialRoomId ??= args?.roomId ?? Number(process.env.ROOM_ID);
-    state.roomId ??= state.initialRoomId;
   });
 
   setAuthData(store => {
@@ -30,12 +31,10 @@ let createApiClient = async (args?: Partial<ClientArgs>, createWebSocket = true)
   // Open websocket connection and join room
   if (createWebSocket) {
     let roomId = getState().initialRoomId;
-    void api.rooms.join({ roomId });
+    await api.rooms.join({ roomId });
   }
   
   return api;
 };
 
-export {
-  createApiClient,
-};
+export { createClient };

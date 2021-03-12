@@ -1,8 +1,8 @@
 import { Droppable, FriendRequest, CurrentRoom, User } from './sonar-types';
 
 export interface GameMessageEvent {
-  join_room: (data: JoinRoomPayload) => void;
-  boop: (data: BoopPayload) => void;
+  join_room: (room: JoinRoomPayload) => void;
+  boop: (boop: BoopPayload) => void;
   friend_request: (data: FriendRequest) => void;
   user_join: (data: User) => void;
   user_leave: (data: User) => void;
