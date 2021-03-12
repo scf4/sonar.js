@@ -1,9 +1,9 @@
-interface StateCheckResponse {
+export interface StateCheckResponse {
   state: 'ok' | 'block';
   message?: string;
 }
 
-interface AssetsResponse {
+export interface AssetsResponse {
   emojiMappings: Emoji[];
   imageUrls: string[];
   soundUrls: string[];
@@ -12,7 +12,11 @@ interface AssetsResponse {
   hash: string;
 }
 
-interface AuthVerificationResponse {
+export type Assets = Omit<AssetsResponse, 'droppables'> & {
+  droppables: Map<string, Droppable>;
+}
+
+export interface AuthVerificationResponse {
   user: AuthUser | null;
   onboardingUser: {
     onboardingStep: OnboardingStep
@@ -26,13 +30,7 @@ enum OnboardingStep {
   SetUsername = 'set_username',
 }
 
-interface Droppable {
-  imageUrl: string;
-  soundId: number | null;
-  soundUrl: Maybe<string>;
-}
-
-interface Emoji {
+export interface Emoji {
   id: number;
   createdAt: Date;
   updatedAt: Date;
@@ -40,13 +38,13 @@ interface Emoji {
   url: string;
 }
 
-interface AuthUser {
+export interface AuthUser {
   id: string;
   authToken: string;
   username: string;
 }
 
-interface ListRoomsResponse {
+export interface ListRoomsResponse {
   rooms: Array<{
     id: number;
     title: string;
@@ -65,7 +63,7 @@ interface ListRoomsResponse {
   }>;
 }
 
-interface GetRoomResponse {
+export interface GetRoomResponse {
   creator:    User | null;
   moderators: User[];
   members:    User[];
@@ -73,7 +71,7 @@ interface GetRoomResponse {
   isPrivate:  boolean;
 }
 
-interface CreateRoomResponse {
+export interface CreateRoomResponse {
   room: {
     id: number;
     name: string;
@@ -87,12 +85,12 @@ interface CreateRoomResponse {
   }
 }
 
-interface ListFriendsResponse {
+export interface ListFriendsResponse {
   friends: User[];
   requests: FriendRequest[];
 }
 
-interface FriendRequest {
+export interface FriendRequest {
   id: number,
   username: string,
   color: string,
@@ -100,7 +98,7 @@ interface FriendRequest {
   isOnline: boolean
 }
 
-interface Droppable {
+export interface Droppable {
   id: string;
   creatorId: number;
   lastActorId: number;
@@ -117,7 +115,7 @@ interface Droppable {
   signText: Maybe<string>;
 }
 
-interface User {
+export interface User {
   id: number;
   username: string;
   color: string;
@@ -129,13 +127,13 @@ interface User {
   relationship: UserRelationship;
 }
 
-interface RoomUser extends User {
+export interface RoomUser extends User {
   role: 'member' | 'moderator' | 'creator';
   position: { x: number; y: number };
   moveId: number;
 }
 
-interface UserRelationship {
+export interface UserRelationship {
   friendshipStatus: 'friends' | 'needs_approval' | 'not_friends' | 'request_sent';
   isMuted: boolean;
   isBlocking: boolean;
@@ -143,9 +141,9 @@ interface UserRelationship {
   notificationSetting: NotificationSetting
 }
 
-type NotificationSetting = 'always' | 'occasionally' | 'never';
+export type NotificationSetting = 'always' | 'occasionally' | 'never';
 
-interface UserItemsResponse {
+export interface UserItemsResponse {
   invitation: {
     imageUrl: string;
     title: string;
@@ -169,33 +167,34 @@ interface UserItemsResponse {
   socials: unknown[];
 }
 
-interface GameData {
+export interface GameData {
   users: RoomUser[];
   objects: Droppable[];
 }
 
-interface Room {
+export interface Room {
   id: number;
   name: string;
   creatorId: number;
   canModifyDroppables: boolean;
   droppablesModificationPermission: 'everyone' | 'creator_only';
-  width: number;
   height: number;
+  width: number;
   isPrivate: boolean;
 }
 
-interface Room {
-  id: number;
-  name: string;
-  canModifyDroppables: Maybe<boolean>;
-  droppablesModificationPermission: Maybe<boolean>;
-  width: Maybe<number>;
-  height: Maybe<number>;
-  isPrivate: Maybe<boolean>;
+export interface CurrentRoom extends Room {
+  position: {
+    x: number;
+    y: number;
+  };
+  entities: {
+    objects: Droppable[];
+    users: User[];
+  };
 }
 
-interface BroadcastSpeakingData {
+export interface BroadcastSpeakingData {
   type: string;
   requestId?: string | '';
   data: {
@@ -205,17 +204,17 @@ interface BroadcastSpeakingData {
   }
 }
 
-interface UserChangedData {
+export interface UserChangedData {
   users: Maybe<User[]>;
   objects: null;
 }
 
-interface ObjectChangedData {
+export interface ObjectChangedData {
   users: null;
   objects: Maybe<any[]>;
 }
 
-interface DisplayToastData {
+export interface DisplayToastData {
   message: string;
   highlightedText: string[];
   userId: Maybe<number>;
@@ -223,13 +222,13 @@ interface DisplayToastData {
   type: 'message',
 }
 
-interface SpaceJoinedData {
+export interface SpaceJoinedData {
   room: Room;
   startingMoveId: number;
   isRejoin: boolean;
   gameData: GameData;
 }
 
-interface SearchUsersResponse {
+export interface SearchUsersResponse {
   users: User[];
 }

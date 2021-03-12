@@ -1,18 +1,6 @@
 import EventEmitter from 'events';
 import TypedEmitter from 'typed-emitter';
-
-interface GameMessageEvent {
-  join_room: (data: JoinRoomPayload) => void;
-  boop: (data: BoopPayload) => void;
-  friend_request: (data: FriendRequest) => void;
-  user_join: (data: User) => void;
-  user_leave: (data: User) => void;
-  user_move: (data: User) => void;
-  user_text: (data: User) => void;
-  user_horn: (data: User) => void;
-  user_self_mute: (data: User) => void;
-  user_self_unmute: (data: User) => void;
-}
+import { GameMessageEvent } from 'lib/types/events';
 
 let events: TypedEmitter<GameMessageEvent> = new EventEmitter();
 

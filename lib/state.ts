@@ -1,4 +1,5 @@
 import type WebSocket from 'ws';
+import { Assets, CurrentRoom } from 'lib/types/sonar-types';
 
 interface State {
   ws: Maybe<WebSocket>;
@@ -7,16 +8,9 @@ interface State {
   initialRoomId?: number;
   userId: number;
   
-  roomId: Maybe<number>;
   moveId: number;
 
-  currentRoom?: {
-    id: number;
-    x: number;
-    y: number;
-    data: Room;
-    entities: Droppable[];
-  };
+  room?: CurrentRoom;
 
   friends: Set<number>;
   friendRequests: Set<number>;

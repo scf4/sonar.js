@@ -1,4 +1,5 @@
 import { request } from 'lib/api/request';
+import { SearchUsersResponse, UserItemsResponse, NotificationSetting } from 'lib/types/sonar-types';
 
 let search = (usernames: string[]) => request
   .post<SearchUsersResponse>('/users/search', { usernames })

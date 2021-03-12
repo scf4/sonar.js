@@ -1,10 +1,6 @@
-export type Assets = Omit<AssetsResponse, 'droppables'> & {
-  droppables: Map<string, Droppable>;
-}
+import { Droppable, FriendRequest, CurrentRoom, User } from './sonar-types';
 
-/* Local message events */
-
-export declare interface GameMessageEvent {
+export interface GameMessageEvent {
   join_room: (data: JoinRoomPayload) => void;
   boop: (data: BoopPayload) => void;
   friend_request: (data: FriendRequest) => void;
@@ -17,8 +13,7 @@ export declare interface GameMessageEvent {
   user_self_unmute: (data: User) => void;
 }
 
-export type JoinRoomPayload = 
-  Room & {
+export interface JoinRoomPayload extends CurrentRoom {
   entities: {
     users: User[];
     objects: Droppable[];

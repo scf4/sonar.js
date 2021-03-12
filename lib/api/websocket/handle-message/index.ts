@@ -1,6 +1,13 @@
 import { getState, updateState } from 'lib/state';
 import { NoUserIdError } from 'lib/errors';
 import { events } from 'lib/api';
+import {
+  BroadcastSpeakingData,
+  DisplayToastData,
+  ObjectChangedData,
+  SpaceJoinedData,
+  UserChangedData,
+} from 'lib/types/sonar-types';
 
 enum ReceivedMessageType {
   SpaceJoined = 'space_joined',
@@ -66,28 +73,20 @@ let handleJoinRoom = (data: SpaceJoinedData) => {
   let x = user.position!.x;
   let y = user.position!.y;
   let moveId = user.moveId;
-  let roomId = data.room.id;
 
-  let entities = data.gameData.objects;
-
-  updateState(state => state.currentRoom = {
-    id: data.room.id,
-    data: data.room,
-    entities,
-    x,
-    y,
+  let { objects, users } = data.gameData;
+  updateState(state => state.room = {
+    ...data.room,
+    entities: {
+      objects,
+      users,
+    },
+    position: { x, y },
   });
 
   updateState(state => state.moveId = moveId);
-  updateState(state => state.roomId = roomId);
-  
-  let { objects, users } = data.gameData;
 
-  events.emit('join_room', {
-    id: roomId,
-    users,
-    objects,
-  });
+  events.emit('join_room', getState().room!);
 };
 
 export { handleMessage };

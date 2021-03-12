@@ -1,4 +1,5 @@
 import { request } from 'lib/api/request';
+import { ListFriendsResponse } from 'lib/types/sonar-types';
 
 let list = () => request
   .get<ListFriendsResponse>('/friends-list')

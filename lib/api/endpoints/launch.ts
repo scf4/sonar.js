@@ -2,6 +2,7 @@ import { request } from 'lib/api/request';
 import { SONAR_BUILD, SONAR_VERSION } from 'lib/constants';
 import { StateCheckCallError } from 'lib/errors';
 import { getState, updateState } from 'lib/state';
+import { AssetsResponse, StateCheckResponse } from 'lib/types/sonar-types';
 
 let loadAssets = async () => {
   let hash = getState().cache.assets.hash ?? '';

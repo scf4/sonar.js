@@ -1,8 +1,9 @@
 import { getState } from 'lib/state';
 import { request, request2 } from 'lib/api/request';
 import { createWebSocket } from 'lib/api/websocket';
+import { ListRoomsResponse, CreateRoomResponse, User } from 'lib/types/sonar-types';
 
-let current = () => getState()?.currentRoom ?? null;
+let current = () => getState()?.room ?? null;
 
 let join = createWebSocket;
 

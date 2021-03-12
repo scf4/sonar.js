@@ -1,4 +1,5 @@
 import { request } from 'lib/api/request';
+import { AuthVerificationResponse } from 'lib/types/sonar-types';
 
 let smsVerification = (number: string) => request
   .post('/users/sms-verification', { number });
