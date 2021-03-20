@@ -1,25 +1,16 @@
-import { req1 } from 'lib/api/request';
-import { ListFriendsResponse, FriendRequestResponse } from 'lib/types/sonar-types';
+import * as request from 'lib/api/request';
+import { ListFriendsResponse, FriendRequestResponse } from 'lib/types';
 
-let list = () => req1.get<ListFriendsResponse>('/friends-list')
-  .then(res => res.data.friends);
+let list = () => request.get<ListFriendsResponse>('/friends-list', 'friends');
 
-let requests = () => req1.get<ListFriendsResponse>('/friends-list')
-  .then(res => res.data.requests);
+let requests = () => request.get<ListFriendsResponse>('/friends-list', 'requests');
 
-let add = (userId: number) => req1.post<FriendRequestResponse>(`/friendships/${userId}/request`);
+let add = (userId: number) => request.post<FriendRequestResponse>(`/friendships/${userId}/request`);
 
-let confirm = (userId: number) => req1.post(`/friendships/${userId}/confirm`);
+let confirm = (userId: number) => request.post(`/friendships/${userId}/confirm`);
 
-let remove = (userId: number) => req1.delete(`/friendships/${userId}`);
+let remove = (userId: number) => request.delete(`/friendships/${userId}`);
 
-let boop = (userId: number) =>  req1.post('/poke', { userId });
+let boop = (userId: number) => request.post('/poke', { userId });
 
-export {
-  list,
-  requests,
-  add,
-  confirm,
-  remove,
-  boop,
-};
+export { list, requests, add, confirm, remove, boop };

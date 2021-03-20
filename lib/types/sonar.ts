@@ -14,14 +14,14 @@ export interface AssetsResponse {
 
 export type Assets = Omit<AssetsResponse, 'droppables'> & {
   droppables: Map<string, Droppable>;
-}
+};
 
 export interface AuthVerificationResponse {
   user: AuthUser | null;
   onboardingUser: {
-    onboardingStep: OnboardingStep
-    onboardingAuthToken: string,
-    isWaitlisted: boolean,
+    onboardingStep: OnboardingStep;
+    onboardingAuthToken: string;
+    isWaitlisted: boolean;
   } | null;
 }
 
@@ -53,15 +53,14 @@ export interface ListRoomsResponse {
     colors?: (string | null)[];
     isPrivate: boolean;
     isRemovable: boolean;
-
     roomParticipantPreviews: Array<{
-      color: string,
-      userId: number,
+      color: string;
+      userId: number;
       profileImageUrl: string;
       colorValue: number;
     }>;
   }[];
-};
+}
 
 export interface GetRoomResponse {
   creator: User | null;
@@ -69,23 +68,22 @@ export interface GetRoomResponse {
   members: User[];
   banned: any[];
   isPrivate: boolean;
+  shareUrl: string;
 }
 
 export interface CreateRoomResponse {
-  room: {
-    id: number;
-    name: string;
-    creatorId: number;
-    isPublic?: null;
-    organizationId?: unknown;
-    headerImageUrl: Maybe<string>;
-    isTutorialTemplate: boolean;
-    isLockedDown: boolean;
-    numOnlineUsers: number;
-    isDefault: boolean;
-    createdAt: string;
-    updatedAt: string;
-  }
+  id: number;
+  name: string;
+  creatorId: number;
+  isPublic?: null;
+  organizationId?: unknown;
+  headerImageUrl: Maybe<string>;
+  isTutorialTemplate: boolean;
+  isLockedDown: boolean;
+  numOnlineUsers: number;
+  isDefault: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface ListFriendsResponse {
@@ -102,7 +100,7 @@ export interface FriendRequest {
 }
 
 export interface FriendRequestResponse {
-  friendshipStatus?: 'request_sent'
+  friendshipStatus?: 'request_sent';
 }
 
 export interface Droppable {
@@ -112,7 +110,7 @@ export interface Droppable {
   orderId: 0;
   type: 'landmark' | '';
   name: string;
-  position: { x: number; y: number }
+  position: { x: number; y: number };
   imageUrl: string;
   soundUrl: Maybe<string>;
   expiration: null;
@@ -145,13 +143,13 @@ export interface UserRelationship {
   isMuted: boolean;
   isBlocking: boolean;
   isBlockedBy: boolean;
-  notificationSetting: NotificationSetting
+  notificationSetting: NotificationSetting;
 }
 
 export type NotificationSetting = 'always' | 'occasionally' | 'never';
 
 export interface SpaceChangedData {
-  data: {};
+  data: {}; // Todo
 }
 
 export interface UserItemsResponse {
@@ -165,10 +163,16 @@ export interface UserItemsResponse {
     description: string;
     highlightedDescriptionTerms: string[];
   }>;
+  coin: Array<{
+    imageUrl: string;
+    title: string;
+    description: string;
+    highlightedDescriptionTerms: string[];
+  }>;
   addSocial: Maybe<{
     imageUrl: string;
     title: 'Add Social';
-    options:  Array<{
+    options: Array<{
       imageUrl: string;
       title: string;
       network: string;
@@ -227,7 +231,7 @@ export interface BroadcastSpeakingData {
     userId: number;
     roomId: number;
     volume: number;
-  }
+  };
 }
 
 export interface UserChangedData {
@@ -245,7 +249,7 @@ export interface DisplayToastData {
   highlightedText: string[];
   userId: Maybe<number>;
   senderRoomId: Maybe<number>;
-  type: 'message',
+  type: 'message';
 }
 
 export interface SpaceJoinedData {

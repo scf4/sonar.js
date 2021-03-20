@@ -1,22 +1,12 @@
-import { req1 } from 'lib/api/request';
-import { SocialNetwork } from 'lib/types/sonar-types';
+import * as request from 'lib/api/request';
+import { SocialNetwork } from 'lib/types';
 
-let addPhoto = (image: any) => 
-  req1.post<void>('/profile/upload', image);
+let addPhoto = (image: any) => request.post('/profile/upload', image, 2);
 
-let addSocial = (network: SocialNetwork, username: string) =>
-  req1.post<void>('/socials', { network, username });
+let addSocial = (network: SocialNetwork, username: string) => request.post('/socials', { network, username }, 2);
 
-let editSocial = (network: SocialNetwork, username: string) =>
-  req1.post<void>('/socials', { network, username });
+let editSocial = (network: SocialNetwork, username: string) => request.post('/socials', { network, username }, 2);
 
-let removeSocial = (network: SocialNetwork) =>
-  req1.delete<void>('/socials', { params: { network } });
+let removeSocial = (network: SocialNetwork) => request.delete('/socials', { network }, 2);
 
-export {
-  addPhoto,
-  addSocial,
-  editSocial,
-  removeSocial,
-};
-
+export { addPhoto, addSocial, editSocial, removeSocial };

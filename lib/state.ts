@@ -1,17 +1,17 @@
 import type WebSocket from 'ws';
-import { Assets, CurrentRoom } from 'lib/types/sonar-types';
+import { Assets, CurrentRoom } from 'lib/types';
 
 interface State {
+  userId: number;
+
   ws: Maybe<WebSocket>;
   wsStatus: number;
   retryCount: number;
+  shuttingDown: boolean;
 
   initialRoomId?: number;
-  userId: number;
-  
-  moveId: number;
-
   room?: CurrentRoom;
+  moveId: number;
 
   friends: Set<number>;
   friendRequests: Set<number>;
@@ -28,6 +28,7 @@ let globalState = {
   ws: null,
   wsStatus: 0,
   retryCount: 0,
+  shuttingDown: false,
 
   friends: new Set(),
   friendRequests: new Set(),
@@ -47,7 +48,4 @@ let updateState = (callback: (state: State) => void) => {
   return globalState as Readonly<State>;
 };
 
-export {
-  getState,
-  updateState,
-};
+export { getState, updateState };

@@ -27,11 +27,12 @@ let createWebSocket = async (args: Params = {}, isRetry = false) => {
     await sleep(750);
     getState().ws?.terminate();
   }
-  
+
   let queryString = encode(decamelizeKeys(args));
   let url = WSS_URL + '/join-room?' + queryString;
 
   // Create websocket
+
   let ws: WebSocket;
 
   if (!isRetry) {
@@ -44,7 +45,7 @@ let createWebSocket = async (args: Params = {}, isRetry = false) => {
     await sleep(retryCount * 1500);
 
     ws = new WebSocket(url, { headers: getHeaders() });
-    updateState(state => state.retryCount += 1);
+    updateState(state => (state.retryCount += 1));
   }
 
   ws.addEventListener('message', msg => {
@@ -54,7 +55,7 @@ let createWebSocket = async (args: Params = {}, isRetry = false) => {
   });
 
   ws.addEventListener('close', ({ wasClean, code, reason }) => {
-    updateState(state => state.wsStatus = ws.readyState);
+    updateState(state => (state.wsStatus = ws.readyState));
     console.warn('Websocket closed:' + JSON.stringify({ code, reason, wasClean }));
   });
 
@@ -65,20 +66,20 @@ let createWebSocket = async (args: Params = {}, isRetry = false) => {
   // Wait for WS connection
   await new Promise<void>(resolve => {
     ws.addEventListener('open', () => {
-      console.warn('Websocket connected');
-      updateState(state => state.retryCount = 0);
-      updateState(state => state.wsStatus = ws.readyState);
+      console.info('Websocket connected');
+      updateState(state => (state.retryCount = 0));
+      updateState(state => (state.wsStatus = ws.readyState));
       ws.send('Ping');
       ws.removeEventListener('open');
       resolve();
-    });  
+    });
 
     if (ws.readyState === WebSocket.OPEN) {
       ws.emit('open');
     }
   });
 
-  updateState(state => state.ws = ws);
+  updateState(state => (state.ws = ws));
 
   return { actions };
 };

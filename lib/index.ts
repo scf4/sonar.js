@@ -1,7 +1,4 @@
 require('dotenv/config');
 
-import './api';
-import './state';
-
-export * from './types/sonar-types';
-export * from './client';
+export * as Sonar from 'lib/client';
+export * from './types';

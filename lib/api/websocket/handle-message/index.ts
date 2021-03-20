@@ -1,13 +1,14 @@
 import { getState, updateState } from 'lib/state';
 import { NoUserIdError } from 'lib/errors';
 import { events } from 'lib/api';
+
 import {
   BroadcastSpeakingData,
   DisplayToastData,
   ObjectChangedData,
   SpaceJoinedData,
   UserChangedData,
-} from 'lib/types/sonar-types';
+} from 'lib/types/sonar';
 
 enum ReceivedMessageType {
   SpaceJoined = 'space_joined',
@@ -26,34 +27,35 @@ enum ReceivedMessageType {
 }
 
 export type ReceivedMessage =
-| { type: ReceivedMessageType.SpaceJoined, data: SpaceJoinedData }
-| { type: ReceivedMessageType.SpaceChanged, data: any }
-| { type: ReceivedMessageType.DisplayToast, data: DisplayToastData }
-| { type: ReceivedMessageType.BroadcastSpeaking, data: BroadcastSpeakingData }
-| { type: ReceivedMessageType.EntitiesChanged, data: UserChangedData }
-| { type: ReceivedMessageType.EntitiesChanged, data: ObjectChangedData }
+  | { type: ReceivedMessageType.SpaceJoined; data: SpaceJoinedData }
+  | { type: ReceivedMessageType.SpaceChanged; data: any }
+  | { type: ReceivedMessageType.DisplayToast; data: DisplayToastData }
+  | { type: ReceivedMessageType.BroadcastSpeaking; data: BroadcastSpeakingData }
+  | { type: ReceivedMessageType.EntitiesChanged; data: UserChangedData }
+  | { type: ReceivedMessageType.EntitiesChanged; data: ObjectChangedData };
 
 function handleMessage(msg: ReceivedMessage): any {
-  if (process.env.NODE_ENV !== 'development') {
-    // console.log(JSON.stringify(msg));
-  }
-
   switch (msg.type) {
     case ReceivedMessageType.DisplayToast: {
       if (msg.data.message.includes('invited you to')) return handleBoop(msg.data);
       return;
     }
 
-    case ReceivedMessageType.SpaceJoined: return handleJoinRoom(msg.data);
+    case ReceivedMessageType.SpaceJoined:
+      return handleJoinRoom(msg.data);
 
     case ReceivedMessageType.EntitiesChanged: {
       let dot = msg.data.users?.[0];
       let object = msg.data.objects?.[0];
-      if (dot) { /* handleDotChange */ }
-      if (object) { /* console.log(JSON.stringify(object)); */ /* handleObjectChange */ }
+      if (dot) {
+        /* handleDotChange */
+      }
+      if (object) {
+        /* handleObjectChange */
+      }
       return;
     }
-  };
+  }
 }
 
 let handleBoop = ({ senderRoomId: roomId, highlightedText }: DisplayToastData) => {
@@ -77,14 +79,17 @@ let handleJoinRoom = (data: SpaceJoinedData) => {
   let moveId = user.moveId;
 
   let { objects, users } = data.gameData;
-  
-  updateState(state => state.room = {
-    ...data.room,
-    entities: { objects, users },
-    position: { x, y },
-  });
 
-  updateState(state => state.moveId = moveId);
+  updateState(
+    state =>
+      (state.room = {
+        ...data.room,
+        entities: { objects, users },
+        position: { x, y },
+      }),
+  );
+
+  updateState(state => (state.moveId = moveId));
 
   events.emit('join_room', getState().room!);
 };
