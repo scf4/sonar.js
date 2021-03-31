@@ -28,12 +28,20 @@ let updateColor = (color: string) => sendAction('color_update', { color });
 let dropItem = (name: string, x?: number, y?: number) => {
   let { room } = getState();
 
+  let signText: string | undefined;
+
+  if (name.trim().startsWith('🪧')) {
+    name = '🪧';
+    signText = name.split('🪧')?.[1];
+  }
+
   // Drop item at provided coordinates, user's position, or default to center
   x ??= room?.position.x ?? 0;
   y ??= room?.position.y ?? 0;
 
   return sendAction('drop_droppable', {
     name,
+    signText,
     clientGeneratedId: generateUniqueSonarId(),
     desiredX: x!,
     desiredY: y!,

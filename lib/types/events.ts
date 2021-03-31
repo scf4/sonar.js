@@ -1,4 +1,4 @@
-import { Droppable, FriendRequest, CurrentRoom, User } from './sonar';
+import { FriendRequest, CurrentRoom, User } from './sonar';
 
 export interface GameMessageEvent {
   join_room: (room: JoinRoomPayload) => void;
@@ -13,12 +13,7 @@ export interface GameMessageEvent {
   user_self_unmute: (data: User) => void;
 }
 
-export interface JoinRoomPayload extends CurrentRoom {
-  entities: {
-    users: User[];
-    objects: Droppable[];
-  };
-}
+export interface JoinRoomPayload extends CurrentRoom {}
 
 export interface BoopPayload {
   roomId: number;
