@@ -15,26 +15,26 @@ interface Message {
 
 /* Message queue */
 
-let isProcessing = false;
-let queue: Message[] = [];
+const isProcessing = false;
+const queue: Message[] = [];
 
-let sendAction = async (type: string, data?: Message['data']) => {
+const sendAction = async (type: string, data?: Message['data']) => {
   queue.push({ type, data });
   await processQueue();
 };
 
-let processQueue = async () => {
+const processQueue = async () => {
   if (isProcessing) return;
 
-  let { ws } = getState();
+  const { ws } = getState();
 
   if (ws?.readyState !== WebSocket.OPEN && ws?.readyState !== WebSocket.CONNECTING) {
-    console.warn(`Initializing websocket before continuing…`);
+    console.warn('Initializing websocket before continuing…');
     await createWebSocket({}, true);
   }
 
   while (queue.length > 0) {
-    let message = queue.shift();
+    const message = queue.shift();
 
     if (message) {
       await sendMessage(message);
@@ -43,13 +43,13 @@ let processQueue = async () => {
   }
 };
 
-let sendMessage = (data: Message) =>
+const sendMessage = (data: Message) =>
   new Promise<Message>((resolve, reject) => {
-    let ws = getState().ws;
+    const ws = getState().ws;
     if (!ws) throw WebSocketDoesntExistError();
     if (ws?.readyState !== WebSocket.OPEN) throw WebSocketNotOpenError();
 
-    let message = JSON.stringify(decamelizeKeys(data));
+    const message = JSON.stringify(decamelizeKeys(data));
 
     ws.send(message, (err?: Error) => (err ? reject(err) : resolve(data)));
   });

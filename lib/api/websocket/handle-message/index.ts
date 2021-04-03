@@ -5,9 +5,8 @@ import { events } from 'lib/api';
 import {
   BroadcastSpeakingData,
   DisplayToastData,
-  ObjectChangedData,
   SpaceJoinedData,
-  UserChangedData,
+  EntityChangedData,
 } from 'lib/types/sonar';
 
 enum ReceivedMessageType {
@@ -27,12 +26,12 @@ enum ReceivedMessageType {
 }
 
 export type ReceivedMessage =
-  | { type: ReceivedMessageType.SpaceJoined; data: SpaceJoinedData }
-  | { type: ReceivedMessageType.SpaceChanged; data: any }
-  | { type: ReceivedMessageType.DisplayToast; data: DisplayToastData }
-  | { type: ReceivedMessageType.BroadcastSpeaking; data: BroadcastSpeakingData }
-  | { type: ReceivedMessageType.EntitiesChanged; data: UserChangedData }
-  | { type: ReceivedMessageType.EntitiesChanged; data: ObjectChangedData };
+  | { type: ReceivedMessageType.SpaceJoined; data: SpaceJoinedData; }
+  | { type: ReceivedMessageType.SpaceChanged; data: any; }
+  | { type: ReceivedMessageType.DisplayToast; data: DisplayToastData; }
+  | { type: ReceivedMessageType.BroadcastSpeaking; data: BroadcastSpeakingData; }
+  | { type: ReceivedMessageType.EntitiesChanged; data: EntityChangedData; }
+  ;
 
 function handleMessage(msg: ReceivedMessage): any {
   switch (msg.type) {
@@ -44,54 +43,54 @@ function handleMessage(msg: ReceivedMessage): any {
     case ReceivedMessageType.SpaceJoined:
       return handleJoinRoom(msg.data);
 
-    case ReceivedMessageType.EntitiesChanged: {
-      let dot = msg.data.users?.[0];
-      let object = msg.data.objects?.[0];
-      if (dot) {
-        /* handleDotChange */
-      }
-      if (object) {
-        /* handleObjectChange */
-      }
-      return;
-    }
+    case ReceivedMessageType.EntitiesChanged:
+      return handleEntitiesChanged(msg.data);
   }
 }
 
-let handleBoop = ({ senderRoomId: roomId, highlightedText }: DisplayToastData) => {
+function handleEntitiesChanged(data: EntityChangedData) {
+  const user = data.users?.[0];
+  const object = data.objects?.[0];
+
+  if (user) {
+    updateState((state) => state.cache.users.set(user.id, user));
+    return events.emit('user_join', user);
+  }
+
+  if (object) return events.emit('object_spawn', {} as any);
+
+  return null;
+}
+
+function handleBoop({ senderRoomId: roomId, highlightedText }: DisplayToastData) {
   if (!roomId) return;
 
-  let [username, roomName] = highlightedText;
-
-  username = username.replace('@', '') ?? null;
+  const [username, roomName] = highlightedText;
 
   events.emit('boop', {
     roomId,
-    username,
     roomName,
+    username: username.replace('@', '') ?? null,
   });
-};
+}
 
-let handleJoinRoom = (data: SpaceJoinedData) => {
-  let user = data.gameData.users.find(u => u.id === getState().userId) ?? NoUserIdError();
-  let x = user.position!.x;
-  let y = user.position!.y;
-  let moveId = user.moveId;
+function handleJoinRoom(data: SpaceJoinedData) {
+  const user = data.gameData.users.find(u => u.id === getState().userId) ?? NoUserIdError();
+  const x = user.position!.x;
+  const y = user.position!.y;
+  const moveId = user.moveId;
 
-  let { objects, users } = data.gameData;
+  const { objects, users } = data.gameData;
 
-  updateState(
-    state =>
-      (state.room = {
-        ...data.room,
-        entities: { objects, users },
-        position: { x, y },
-      }),
-  );
+  updateState(state => (state.room = {
+    ...data.room,
+    entities: { objects, users },
+    position: { x, y },
+  }));
 
   updateState(state => (state.moveId = moveId));
 
   events.emit('join_room', getState().room!);
-};
+}
 
 export { handleMessage };

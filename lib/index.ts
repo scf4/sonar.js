@@ -1,4 +1,5 @@
 require('dotenv/config');
 
-export * as Sonar from './client';
+export * from './client';
 export * from './types';
+export { Client } from './client';

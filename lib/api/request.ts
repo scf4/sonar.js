@@ -3,7 +3,7 @@ import { camelizeKeysInPlace, decamelizeKeys } from 'fast-case';
 import { HTTPS_URL, HTTPS_URL_V2, SONAR_BUILD, SONAR_VERSION } from 'lib/constants';
 import { getClientHeaders } from 'lib/api/auth';
 
-let getHeaders = () => ({
+const getHeaders = () => ({
   'Accept': '*/*',
   'Accept-Language': 'en-us',
   'Accept-Encoding': 'gzip, deflate, br',
@@ -13,7 +13,7 @@ let getHeaders = () => ({
   ...getClientHeaders(),
 });
 
-let createAxiosInstance = (baseUrl = HTTPS_URL) =>
+const createAxiosInstance = (baseUrl = HTTPS_URL) =>
   axios.create({
     baseURL: baseUrl,
     responseType: 'json',
@@ -25,7 +25,7 @@ let createAxiosInstance = (baseUrl = HTTPS_URL) =>
     },
   });
 
-let axiosInstances = [createAxiosInstance(HTTPS_URL), createAxiosInstance(HTTPS_URL_V2)];
+const axiosInstances = [createAxiosInstance(HTTPS_URL), createAxiosInstance(HTTPS_URL_V2)];
 
 type Body = any;
 type Prop = string | undefined;

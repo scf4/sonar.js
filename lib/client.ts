@@ -9,15 +9,13 @@ interface ClientArgs {
   authToken: string;
   clientName: string;
   userId: number;
-  roomId: number;
+  serverId: number;
 }
 
-export type Client = typeof api;
-
-let createClient = async (args: Maybe<Partial<ClientArgs>>, createWebSocket = true): Promise<Client> => {
+const createClient = async (args: Maybe<Partial<ClientArgs>>, createWebSocket = true): Promise<Client> => {
   updateState(state => {
     state.userId ??= args?.userId ?? Number(process.env.USER_ID);
-    state.initialRoomId ??= args?.roomId ?? Number(process.env.ROOM_ID);
+    state.initialServerId ??= args?.serverId ?? Number(process.env.ROOM_ID);
   });
 
   setAuthData(store => {
@@ -30,11 +28,13 @@ let createClient = async (args: Maybe<Partial<ClientArgs>>, createWebSocket = tr
 
   // Open websocket connection and join room
   if (createWebSocket) {
-    let roomId = getState().initialRoomId;
-    await api.rooms.join({ roomId });
+    const serverId = getState().initialServerId;
+    await api.rooms.join({ serverId });
   }
 
   return api;
 };
+
+export type Client = typeof api;
 
 export { createClient };

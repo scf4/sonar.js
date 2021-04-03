@@ -88,10 +88,10 @@ export interface CreateRoomResponse {
 
 export interface ListFriendsResponse {
   friends: User[];
-  requests: FriendRequest[];
+  requests: FriendRequestPayload[];
 }
 
-export interface FriendRequest {
+export interface FriendRequestPayload {
   id: number;
   username: string;
   color: string;
@@ -149,7 +149,9 @@ export interface UserRelationship {
 export type NotificationSetting = 'always' | 'occasionally' | 'never';
 
 export interface SpaceChangedData {
-  data: {}; // Todo
+  data: {
+    // Todo
+  };
 }
 
 export interface UserItemsResponse {
@@ -206,14 +208,15 @@ export interface Room {
   id: number;
   name: string;
   creatorId: number;
-  canModifyDroppables: boolean;
-  droppablesModificationPermission: 'everyone' | 'creator_only';
   height: number;
   width: number;
   isPrivate: boolean;
+  droppablesModificationPermission: 'everyone' | 'creator_only';
+  canModifyDroppables: boolean;
+  mode: 'public' | '';
 }
 
-export interface CurrentRoom extends Room {
+export interface CurrentRoomPayload extends Room {
   position: {
     x: number;
     y: number;
@@ -234,13 +237,8 @@ export interface BroadcastSpeakingData {
   };
 }
 
-export interface UserChangedData {
-  users: Maybe<User[]>;
-  objects: null;
-}
-
-export interface ObjectChangedData {
-  users: null;
+export interface EntityChangedData {
+  users: Maybe<RoomUser[]>;
   objects: Maybe<any[]>;
 }
 

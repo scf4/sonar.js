@@ -4,14 +4,19 @@ export * as actions from './websocket/actions';
 export * as auth from './endpoints/login';
 export * as friends from './endpoints/friends';
 export * as launch from './endpoints/launch';
-export * as rooms from './endpoints/rooms';
+export * as rooms from './endpoints/servers';
+export * as servers from './endpoints/servers';
 export * as profile from './endpoints/profile';
 export * as users from './endpoints/users';
 export * from './events';
 
-let shutdown = () => {
+export {
+  getState as getInternalState,
+};
+
+const shutdown = () => {
   updateState(s => { s.shuttingDown = true; });
-  let { ws } = getState();
+  const { ws } = getState();
   ws?.close(1001);
   ws?.terminate();
 };

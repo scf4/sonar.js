@@ -1,5 +1,5 @@
 import type WebSocket from 'ws';
-import { Assets, CurrentRoom } from 'lib/types';
+import { Assets, CurrentRoomPayload } from 'lib/types';
 
 interface State {
   userId: number;
@@ -9,8 +9,8 @@ interface State {
   retryCount: number;
   shuttingDown: boolean;
 
-  initialRoomId?: number;
-  room?: CurrentRoom;
+  initialServerId?: number;
+  room?: CurrentRoomPayload;
   moveId: number;
 
   friends: Set<number>;
@@ -24,7 +24,7 @@ interface State {
   };
 }
 
-let globalState = {
+const globalState = {
   ws: null,
   wsStatus: 0,
   retryCount: 0,
@@ -41,9 +41,9 @@ let globalState = {
   },
 } as State;
 
-let getState = () => globalState as Readonly<State>;
+const getState = () => globalState as Readonly<State>;
 
-let updateState = (callback: (state: State) => void) => {
+const updateState = (callback: (state: State) => void) => {
   callback(globalState);
   return globalState as Readonly<State>;
 };

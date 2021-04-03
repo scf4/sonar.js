@@ -1,7 +1,7 @@
-import EventEmitter from "events";
-import TypedEmitter from "typed-emitter";
-import { GameMessageEvent } from "lib/types/events";
+import EventEmitter from 'events';
+import TypedEmitter from 'typed-emitter';
+import { GameMessageEvent } from 'lib/types';
 
-let events: TypedEmitter<GameMessageEvent> = new EventEmitter();
+const events: TypedEmitter<GameMessageEvent> = new EventEmitter();
 
 export { events, TypedEmitter, GameMessageEvent };

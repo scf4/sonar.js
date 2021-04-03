@@ -11,13 +11,13 @@ import { WebSocketDidntConnectError } from 'lib/errors';
 import { sleep } from 'lib/utils/sleep';
 
 type Params = {
-  roomId?: number;
+  serverId?: number;
   joinSilently?: boolean;
   viewportWidth?: number;
   viewportHeight?: number;
 };
 
-let createWebSocket = async (args: Params = {}, isRetry = false) => {
+const createWebSocket = async (args: Params = {}, isRetry = false) => {
   args.viewportWidth ??= 35;
   args.viewportHeight ??= 35;
   args.joinSilently ??= true;
@@ -28,8 +28,8 @@ let createWebSocket = async (args: Params = {}, isRetry = false) => {
     getState().ws?.terminate();
   }
 
-  let queryString = encode(decamelizeKeys(args));
-  let url = WSS_URL + '/join-room?' + queryString;
+  const queryString = encode(decamelizeKeys(args));
+  const url = WSS_URL + '/join-room?' + queryString;
 
   // Create websocket
 
@@ -39,7 +39,7 @@ let createWebSocket = async (args: Params = {}, isRetry = false) => {
     ws = new WebSocket(url, { headers: getHeaders() });
   } else {
     // Retry connection if failed...
-    let { retryCount } = getState();
+    const { retryCount } = getState();
     if (retryCount >= 3) throw WebSocketDidntConnectError();
 
     await sleep(retryCount * 1500);
@@ -49,7 +49,7 @@ let createWebSocket = async (args: Params = {}, isRetry = false) => {
   }
 
   ws.addEventListener('message', msg => {
-    let data: ReceivedMessage = JSON.parse(msg.data);
+    const data: ReceivedMessage = JSON.parse(msg.data);
     camelizeKeysInPlace(data);
     handleMessage(data);
   });

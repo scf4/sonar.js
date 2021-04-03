@@ -3,10 +3,10 @@ import { getState } from 'lib/state';
 
 let sonarIdCount = 0;
 
-let generateUniqueSonarId = () => {
+const generateUniqueSonarId = () => {
   sonarIdCount += 1;
-  let userId = getState().userId ?? NoUserIdError();
-  let timestamp = Date.now().toString();
+  const userId = getState().userId ?? NoUserIdError();
+  const timestamp = Date.now().toString();
   return `${userId}-${timestamp}.${sonarIdCount}`;
 };
 

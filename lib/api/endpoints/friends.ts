@@ -1,16 +1,17 @@
 import * as request from 'lib/api/request';
+
 import { ListFriendsResponse, FriendRequestResponse } from 'lib/types';
 
-let list = () => request.get<ListFriendsResponse>('/friends-list', 'friends');
+const list = () => request.get<ListFriendsResponse['friends']>('/friends-list', 'friends');
 
-let requests = () => request.get<ListFriendsResponse>('/friends-list', 'requests');
+const requests = () => request.get<ListFriendsResponse['requests']>('/friends-list', 'requests');
 
-let add = (userId: number) => request.post<FriendRequestResponse>(`/friendships/${userId}/request`);
+const add = (userId: number) => request.post<FriendRequestResponse>(`/friendships/${userId}/request`);
 
-let confirm = (userId: number) => request.post(`/friendships/${userId}/confirm`);
+const confirm = (userId: number) => request.post(`/friendships/${userId}/confirm`);
 
-let remove = (userId: number) => request.delete(`/friendships/${userId}`);
+const remove = (userId: number) => request.delete(`/friendships/${userId}`);
 
-let boop = (userId: number) => request.post('/poke', { userId });
+const boop = (userId: number) => request.post('/poke', { userId });
 
 export { list, requests, add, confirm, remove, boop };
