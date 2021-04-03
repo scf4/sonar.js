@@ -10,12 +10,13 @@ interface ClientArgs {
   clientName: string;
   userId: number;
   serverId: number;
+  roomId: number;
 }
 
 const createClient = async (args: Maybe<Partial<ClientArgs>>, createWebSocket = true): Promise<Client> => {
   updateState(state => {
     state.userId ??= args?.userId ?? Number(process.env.USER_ID);
-    state.initialServerId ??= args?.serverId ?? Number(process.env.SERVER_ID);
+    state.initialServerId ??= args?.serverId ?? Number(process.env.SERVER_ID) ?? args?.roomId;
   });
 
   setAuthData(store => {
