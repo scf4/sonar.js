@@ -11,6 +11,7 @@ import { WebSocketDidntConnectError } from 'lib/errors';
 import { sleep } from 'lib/utils/sleep';
 
 type Params = {
+  roomId?: number;
   serverId?: number;
   joinSilently?: boolean;
   viewportWidth?: number;
@@ -21,6 +22,7 @@ const createWebSocket = async (args: Params = {}, isRetry = false) => {
   args.viewportWidth ??= 35;
   args.viewportHeight ??= 35;
   args.joinSilently ??= true;
+  args.roomId = args.serverId;
 
   if (getState().ws?.readyState === WebSocket.OPEN) {
     getState().ws?.close(1001);
@@ -28,8 +30,11 @@ const createWebSocket = async (args: Params = {}, isRetry = false) => {
     getState().ws?.terminate();
   }
 
+  args.serverId = undefined;
   const queryString = encode(decamelizeKeys(args));
   const url = WSS_URL + '/join-room?' + queryString;
+
+  console.log({ websocketUrl: url });
 
   // Create websocket
 
