@@ -9,6 +9,7 @@ import * as actions from './actions';
 import { handleMessage, ReceivedMessage } from './handle-message';
 import { WebSocketDidntConnectError } from 'lib/errors';
 import { sleep } from 'lib/utils/sleep';
+import { omit } from 'lodash';
 
 type Params = {
   roomId?: number;
@@ -21,20 +22,22 @@ type Params = {
 const createWebSocket = async (args: Params = {}, isRetry = false) => {
   args.viewportWidth ??= 35;
   args.viewportHeight ??= 35;
-  args.joinSilently ??= true;
+  args.joinSilently ||= undefined;
   args.roomId = args.serverId;
 
-  if (getState().ws?.readyState === WebSocket.OPEN) {
+  const readyState = getState().ws?.readyState;
+
+  if (readyState === WebSocket.OPEN || readyState === WebSocket.CONNECTING || readyState === WebSocket.CLOSING) {
     getState().ws?.close(1001);
-    await sleep(750);
+    await sleep(1200);
     getState().ws?.terminate();
+    await sleep(1200);
   }
 
-  args.serverId = undefined;
-  const queryString = encode(decamelizeKeys(args));
+  const queryString = encode(decamelizeKeys(omit(args, 'serverId')));
   const url = WSS_URL + '/join-room?' + queryString;
 
-  console.log({ websocketUrl: url });
+  console.log(`WS connecting to ${url}`);
 
   // Create websocket
 

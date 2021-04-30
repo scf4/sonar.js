@@ -7,13 +7,13 @@ export interface AssetsResponse {
   emojiMappings: Emoji[];
   imageUrls: string[];
   soundUrls: string[];
-  droppables: Record<string, Droppable>;
+  droppables: Record<string, ObjectEntity>;
   strings: [];
   hash: string;
 }
 
 export type Assets = Omit<AssetsResponse, 'droppables'> & {
-  droppables: Map<string, Droppable>;
+  droppables: Map<string, ObjectEntity>;
 };
 
 export interface AuthVerificationResponse {
@@ -49,14 +49,15 @@ export interface ListRoomsResponse {
     id: number;
     title: string;
     subtitle: string;
-    colorValues?: (number | null)[];
-    colors?: (string | null)[];
+    colorValues: [number?, number?];
+    colors: [string?, string?];
     isPrivate: boolean;
     isRemovable: boolean;
+    isLocationBased: boolean;
     roomParticipantPreviews: Array<{
-      color: string;
       userId: number;
       profileImageUrl: string;
+      color: string;
       colorValue: number;
     }>;
   }[];
@@ -66,7 +67,7 @@ export interface GetRoomResponse {
   creator: User | null;
   moderators: User[];
   members: User[];
-  banned: any[];
+  banned: User[];
   isPrivate: boolean;
   shareUrl: string;
 }
@@ -88,14 +89,14 @@ export interface CreateRoomResponse {
 
 export interface ListFriendsResponse {
   friends: User[];
-  requests: FriendRequestPayload[];
+  requests: FriendRequest[];
 }
 
-export interface FriendRequestPayload {
+export interface FriendRequest {
   id: number;
   username: string;
   color: string;
-  colorValue: number;
+  // colorValue: number;
   isOnline: boolean;
 }
 
@@ -103,12 +104,12 @@ export interface FriendRequestResponse {
   friendshipStatus?: 'request_sent';
 }
 
-export interface Droppable {
+export interface ObjectEntity {
   id: string;
   creatorId: number;
   lastActorId: number;
-  orderId: 0;
-  type: 'landmark' | '';
+  orderId: number;
+  type: 'landmark' | 'pickup';
   name: string;
   position: { x: number; y: number };
   imageUrl: string;
@@ -116,17 +117,17 @@ export interface Droppable {
   expiration: null;
   liftExpiration: number;
   radioStationState: unknown;
-  isselfMuted: boolean;
+  isSelfMuted: boolean;
   signText: Maybe<string>;
 }
 
 export interface User {
   id: number;
   username: string;
-  color: string;
-  colorValue: number;
-  moderationState?: Maybe<'none' | 'moderator'>;
   profileImageUrl?: Maybe<string>;
+  color: string;
+  // colorValue: number;
+  moderationState?: Maybe<'none' | 'moderator'>;
   currentRoomId?: Maybe<number>;
   isOnline: boolean;
   relationship: UserRelationship;
@@ -136,6 +137,9 @@ export interface RoomUser extends User {
   role: 'member' | 'moderator' | 'creator';
   position: { x: number; y: number };
   moveId: number;
+  profileImageUrlChanged: boolean;
+  isSelfMuted: boolean;
+  statusText: string;
 }
 
 export interface UserRelationship {
@@ -143,6 +147,7 @@ export interface UserRelationship {
   isMuted: boolean;
   isBlocking: boolean;
   isBlockedBy: boolean;
+  isBestFriend: boolean;
   notificationSetting: NotificationSetting;
 }
 
@@ -165,20 +170,21 @@ export interface UserItemsResponse {
     description: string;
     highlightedDescriptionTerms: string[];
   }>;
-  coin: Array<{
+  coin: {
     imageUrl: string;
     title: string;
     description: string;
     highlightedDescriptionTerms: string[];
-  }>;
+    count: number;
+  } | null;
   addSocial: Maybe<{
     imageUrl: string;
     title: 'Add Social';
     options: Array<{
-      imageUrl: string;
       title: string;
-      network: string;
       displayName: string;
+      imageUrl: string;
+      network: SocialNetwork;
     }>;
   }>;
   socials: Array<{
@@ -195,25 +201,33 @@ export interface UserItemsResponse {
       username: string;
     }[];
   }>;
+  bestFriends: {
+    title: string;
+    friends: Pick<User, 'id' | 'username' | 'profileImageUrl' | 'color'>[];
+    friendsCount: number;
+  }
 }
 
 export type SocialNetwork = 'instagram' | 'discord' | 'twitter' | 'snapchat' | 'tiktok';
 
 export interface GameData {
   users: RoomUser[];
-  objects: Droppable[];
+  objects: ObjectEntity[];
 }
 
 export interface Room {
   id: number;
   name: string;
   creatorId: number;
+  headerImageUrl: Maybe<string>;
   height: number;
   width: number;
+  mode: 'public' | 'private' | 'party';
   isPrivate: boolean;
-  droppablesModificationPermission: 'everyone' | 'creator_only';
   canModifyDroppables: boolean;
-  mode: 'public' | '';
+  droppablesModificationPermission: 'everyone' | 'creator_only';
+  isHomeServer: boolean;
+  isLocationBased: boolean;
 }
 
 export interface CurrentRoomPayload extends Room {
@@ -222,7 +236,7 @@ export interface CurrentRoomPayload extends Room {
     y: number;
   };
   entities: {
-    objects: Droppable[];
+    objects: ObjectEntity[];
     users: User[];
   };
 }
@@ -235,6 +249,11 @@ export interface BroadcastSpeakingData {
     roomId: number;
     volume: number;
   };
+}
+
+export interface EntityChangedData {
+  users: Maybe<RoomUser[]>;
+  objects: Maybe<any[]>;
 }
 
 export interface EntityChangedData {
@@ -256,3 +275,15 @@ export interface SpaceJoinedData {
   isRejoin: boolean;
   gameData: GameData;
 }
+
+export interface ServerInviteData { 
+  roomId: number;
+  roomName: string;
+  username: string;
+}
+
+export interface DroppablesDroppedData {
+  gameObjects: Array<ObjectEntity>
+}
+
+// export interface FriendRequestData {}

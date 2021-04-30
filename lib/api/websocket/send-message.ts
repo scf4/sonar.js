@@ -2,7 +2,7 @@ import { decamelizeKeys } from 'fast-case';
 import WebSocket from 'ws';
 
 import { getState } from 'lib/state';
-import { createWebSocket } from 'lib/api/websocket';
+// import { createWebSocket } from 'lib/api/websocket';
 import { WebSocketDoesntExistError, WebSocketNotOpenError } from 'lib/errors';
 import { WS_MILLISECOND_RATE_LIMIT } from 'lib/constants';
 import { sleep } from 'utils/sleep';
@@ -29,8 +29,9 @@ const processQueue = async () => {
   const { ws } = getState();
 
   if (ws?.readyState !== WebSocket.OPEN && ws?.readyState !== WebSocket.CONNECTING) {
-    console.warn('Initializing websocket before continuing…');
-    await createWebSocket({}, true);
+    throw WebSocketNotOpenError();
+    // console.warn('Initializing websocket before continuing…');
+    // await createWebSocket({}, true);
   }
 
   while (queue.length > 0) {

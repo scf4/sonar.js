@@ -3,7 +3,7 @@ import { User, UserItemsResponse, NotificationSetting } from 'lib/types';
 
 const search = (query: string) => request.post<{ data: User[] }>('/search/users?query=' + query);
 
-const items = (userId: number) => request.post<UserItemsResponse>('/users/items', { userId });
+const items = (userId: number) => request.get<UserItemsResponse>(`/items?user_id=${userId}`);
 
 const mute = (userId: number) => request.post(`/mutes/${userId}`);
 

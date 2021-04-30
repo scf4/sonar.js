@@ -19,7 +19,7 @@ const invite = (serverId: number, userId: number) => request.post(`/rooms/${serv
 
 const uninvite = (serverId: number, userId: number) => request.post(`/rooms/${serverId}/uninvite`, { userId });
 
-const uninvitedFriends = (serverId: number) => request.get<User[]>(`/rooms/${serverId}/uninvited-friends`);
+const uninvitedFriendsList = (serverId: number) => request.get<User[]>(`/rooms/${serverId}/uninvited-friends`);
 
 const ban = (serverId: number, userId: number) => request.post(`/rooms/${serverId}/banned_users/add`, { userId });
 
@@ -54,7 +54,9 @@ const members = (serverId: number) => meta(serverId, 'members');
 
 const bannedUsers = (serverId: number) => meta(serverId, 'banned');
 
-const setHomeServer = (serverId: number) => request.post('/set-home-room', { serverId });
+const setHomeServer = (homeServerId: number) => request.post('/set-home-server', { homeServerId });
+
+const unsetHomeServer = () => request.post('/clear-home-server');
 
 export {
   current,
@@ -67,7 +69,7 @@ export {
   unlock,
   invite,
   uninvite,
-  uninvitedFriends,
+  uninvitedFriendsList as uninvitedFriends,
   bannedUsers,
   members,
   moderators,
@@ -81,4 +83,5 @@ export {
   meta,
 
   setHomeServer,
+  unsetHomeServer,
 };

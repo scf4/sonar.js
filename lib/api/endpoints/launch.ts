@@ -17,7 +17,7 @@ const loadAssets = async () => {
 };
 
 const stateCheck = async () => {
-  const path = `/state-check?version=${SONAR_VERSION}&build=${SONAR_BUILD}`;
+  const path = `/state-check?version=${SONAR_VERSION}&build=${SONAR_BUILD}&authorization=${process.env.AUTH_TOKEN}`;
   const resp = await request.get<StateCheckResponse>(path);
 
   if (resp.state !== 'ok') {

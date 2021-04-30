@@ -11,6 +11,7 @@
   "rules": {
     "@typescript-eslint/no-floating-promises": [2, { "ignoreVoid": true }],
     "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-empty-interface": 0,
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/no-non-null-assertion": "off",
     "arrow-parens": "off",
@@ -18,6 +19,7 @@
     "no-empty": ["warn", { "allowEmptyCatch": true }],
     "eol-last": ["error"],
     "quotes": ["error", "single"],
-    "semi": ["error"]
+    "semi": ["error"],
+    "prefer-const": 0
   }
 }

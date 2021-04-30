@@ -1,9 +1,9 @@
-import { FriendRequestPayload, CurrentRoomPayload, RoomUser, Droppable } from './sonar';
+import { CurrentRoomPayload, RoomUser, ObjectEntity } from './sonar';
 
 export interface GameMessageEvent {
-  join_room: (room: CurrentRoomPayload) => void;
+  join_room: (room: JoinRoomPayload) => void;
   boop: (boop: BoopPayload) => void;
-  friend_request: (data: FriendRequestPayload) => void;
+  friend_request: (user: { name: string, id: Maybe<number> }) => void;
   user_join: (data: RoomUser) => void;
   user_leave: (data: RoomUser) => void;
   user_move: (data: RoomUser) => void;
@@ -11,7 +11,9 @@ export interface GameMessageEvent {
   user_horn: (data: RoomUser) => void;
   user_self_mute: (data: RoomUser) => void;
   user_self_unmute: (data: RoomUser) => void;
-  object_spawn: (data: Droppable) => void;
+  object_spawn: (data: ObjectEntity) => void;
+  object_dropped: (data: Pick<ObjectEntity, 'id' | 'name' | 'position'>) => void;
+  object_despawn: (data: ObjectEntity) => void;
 }
 
 export interface BoopPayload {

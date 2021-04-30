@@ -7,6 +7,9 @@ import {
   DisplayToastData,
   SpaceJoinedData,
   EntityChangedData,
+  ServerInviteData,
+  ObjectEntity,
+  DroppablesDroppedData,
 } from 'lib/types/sonar';
 
 enum ReceivedMessageType {
@@ -31,21 +34,42 @@ export type ReceivedMessage =
   | { type: ReceivedMessageType.DisplayToast; data: DisplayToastData; }
   | { type: ReceivedMessageType.BroadcastSpeaking; data: BroadcastSpeakingData; }
   | { type: ReceivedMessageType.EntitiesChanged; data: EntityChangedData; }
-  ;
+  | { type: ReceivedMessageType.EntitiesSpawned; data: EntityChangedData; }
+  | { type: ReceivedMessageType.DroppablesDropped; data: DroppablesDroppedData; }
+;
 
-function handleMessage(msg: ReceivedMessage): any {
+function handleMessage(msg: ReceivedMessage): void {
   switch (msg.type) {
-    case ReceivedMessageType.DisplayToast: {
-      if (msg.data.message.includes('invited you to')) return handleBoop(msg.data);
-      return;
-    }
-
     case ReceivedMessageType.SpaceJoined:
-      return handleJoinRoom(msg.data);
+      return handleJoinServer(msg.data);
 
     case ReceivedMessageType.EntitiesChanged:
       return handleEntitiesChanged(msg.data);
+
+    case ReceivedMessageType.DroppablesDropped:
+      return handleDroppablesDropped(msg.data.gameObjects[0]);
+
+    case ReceivedMessageType.DisplayToast: {
+      // Server Invite
+      if (msg.data.message.includes('invited you to')) {
+        let [username, roomName] = msg.data.highlightedText;
+        const roomId = msg.data.senderRoomId!;
+        username = username.replace('@', '') ?? null;
+        return handleServerInvite({ roomId, username, roomName });
+      }
+
+      // Friend request
+      if (msg.data.message.includes('wants to be your friend')) {
+        const username = msg.data.highlightedText[0].replace('@', '');
+        return handleFriendRequest(username, msg.data.userId);
+      }
+    }
   }
+}
+
+function handleDroppablesDropped(item: ObjectEntity) {
+  const { id, name, position } = item;
+  events.emit('object_dropped', { id, name, position });
 }
 
 function handleEntitiesChanged(data: EntityChangedData) {
@@ -53,31 +77,21 @@ function handleEntitiesChanged(data: EntityChangedData) {
   const object = data.objects?.[0];
 
   if (user) {
-    updateState((state) => state.cache.users.set(user.id, user));
-    return events.emit('user_join', user);
+    updateState(state => state.cache.users.set(user.id, user));
+    events.emit('user_join', user);
+  } else if (object) {
+    events.emit('object_spawn', object);
   }
-
-  if (object) return events.emit('object_spawn', {} as any);
-
-  return null;
 }
 
-function handleBoop({ senderRoomId: roomId, highlightedText }: DisplayToastData) {
-  if (!roomId) return;
-
-  const [username, roomName] = highlightedText;
-
-  events.emit('boop', {
-    roomId,
-    roomName,
-    username: username.replace('@', '') ?? null,
-  });
+function handleServerInvite(data: ServerInviteData) {
+  events.emit('boop', data);
 }
 
-function handleJoinRoom(data: SpaceJoinedData) {
+function handleJoinServer(data: SpaceJoinedData) {
   const user = data.gameData.users.find(u => u.id === getState().userId) ?? NoUserIdError();
-  const x = user.position!.x;
-  const y = user.position!.y;
+  const x = user.position.x;
+  const y = user.position.y;
   const moveId = user.moveId;
 
   const { objects, users } = data.gameData;
@@ -91,6 +105,10 @@ function handleJoinRoom(data: SpaceJoinedData) {
   updateState(state => (state.moveId = moveId));
 
   events.emit('join_room', getState().room!);
+}
+
+function handleFriendRequest(username: string, id: Maybe<number>) {
+  events.emit('friend_request', { name: username, id });
 }
 
 export { handleMessage };
