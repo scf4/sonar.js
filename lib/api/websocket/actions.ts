@@ -53,4 +53,6 @@ const dropSign = (text: string, x?: number, y?: number) => {
   return dropItem('🪧', x, y, text);
 };
 
-export { horn, move, updateStatusText, updateColor, muteSelf, unmuteSelf, dropItem, dropSign };
+const removeItem = (id: string) => sendAction('remove_droppable', { id });
+
+export { horn, move, updateStatusText, updateColor, muteSelf, unmuteSelf, dropItem, dropSign, removeItem };
