@@ -8,7 +8,7 @@ export * as rooms from './endpoints/servers';
 export * as servers from './endpoints/servers';
 export * as profile from './endpoints/profile';
 export * as users from './endpoints/users';
-export * from './events';
+export { events } from './events';
 
 export { getState as getInternalState };
 

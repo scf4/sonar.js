@@ -12,6 +12,6 @@ const confirm = (userId: number) => request.post(`/friendships/${userId}/confirm
 
 const remove = (userId: number) => request.delete(`/friendships/${userId}`);
 
-const boop = (userId: number) => request.post('/poke', { userId });
+const ping = (userId: number) => request.post('/poke', { userId });
 
-export { list, requests, add, confirm, remove, boop };
+export { list, requests, add, confirm, remove, ping };
