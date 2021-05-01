@@ -1,4 +1,4 @@
-import { getState, updateState } from 'lib/state';
+import { getState, updateState } from 'lib/store';
 import { generateUniqueSonarId } from 'utils/uid';
 import { sendAction } from './send-message';
 

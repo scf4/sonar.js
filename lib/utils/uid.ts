@@ -1,5 +1,5 @@
 import { NoUserIdError } from 'lib/errors';
-import { getState } from 'lib/state';
+import { getState } from 'lib/store';
 
 let sonarIdCount = 0;
 

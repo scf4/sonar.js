@@ -1,7 +1,7 @@
 import * as request from 'lib/api/request';
 import { SONAR_BUILD, SONAR_VERSION } from 'lib/constants';
 import { StateCheckCallError } from 'lib/errors';
-import { getState, updateState } from 'lib/state';
+import { getState, updateState } from 'lib/store';
 import { AssetsResponse, StateCheckResponse } from 'lib/types';
 
 const loadAssets = async () => {

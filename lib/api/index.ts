@@ -1,4 +1,4 @@
-import { getState, updateState } from 'lib/state';
+import { getState } from 'lib/store';
 
 export * as actions from './websocket/actions';
 export * as auth from './endpoints/login';
@@ -10,14 +10,10 @@ export * as profile from './endpoints/profile';
 export * as users from './endpoints/users';
 export * from './events';
 
-export {
-  getState as getInternalState,
-};
+export { getState as getInternalState };
 
 const shutdown = () => {
-  updateState(s => { s.shuttingDown = true; });
   const { ws } = getState();
-  ws?.close(1001);
   ws?.terminate();
 };
 

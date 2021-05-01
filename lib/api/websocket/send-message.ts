@@ -1,10 +1,9 @@
 import { decamelizeKeys } from 'fast-case';
 import WebSocket from 'ws';
 
-import { getState } from 'lib/state';
-// import { createWebSocket } from 'lib/api/websocket';
+import { getState } from 'lib/store';
 import { WebSocketDoesntExistError, WebSocketNotOpenError } from 'lib/errors';
-import { WS_MILLISECOND_RATE_LIMIT } from 'lib/constants';
+import { WS_RATE_LIMIT } from 'lib/constants';
 import { sleep } from 'utils/sleep';
 
 interface Message {
@@ -14,7 +13,6 @@ interface Message {
 }
 
 /* Message queue */
-
 const isProcessing = false;
 const queue: Message[] = [];
 
@@ -28,27 +26,29 @@ const processQueue = async () => {
 
   const { ws } = getState();
 
-  if (ws?.readyState !== WebSocket.OPEN && ws?.readyState !== WebSocket.CONNECTING) {
-    throw WebSocketNotOpenError();
-    // console.warn('Initializing websocket before continuing…');
-    // await createWebSocket({}, true);
-  }
+  if (!ws || ws.readyState < 2) throw WebSocketNotOpenError();
 
   while (queue.length > 0) {
     const message = queue.shift();
 
-    if (message) {
+    if (!message) continue;
+
+    try {
       await sendMessage(message);
-      await sleep(WS_MILLISECOND_RATE_LIMIT);
+    } catch (e) {
+      console.error('sendMessage error:');
+      console.error(e);
     }
+    await sleep(WS_RATE_LIMIT);
   }
 };
 
 const sendMessage = (data: Message) =>
   new Promise<Message>((resolve, reject) => {
     const ws = getState().ws;
+
     if (!ws) throw WebSocketDoesntExistError();
-    if (ws?.readyState !== WebSocket.OPEN) throw WebSocketNotOpenError();
+    if (ws.readyState !== WebSocket.OPEN) throw WebSocketNotOpenError();
 
     const message = JSON.stringify(decamelizeKeys(data));
 

@@ -2,7 +2,7 @@ require('dotenv/config');
 
 import * as api from 'lib/api';
 import { setAuthData } from 'lib/api/auth';
-import { getState, updateState } from 'lib/state';
+import { getState, updateState } from 'lib/store';
 import { ClientArgMissingError } from './errors';
 
 interface ClientArgs {

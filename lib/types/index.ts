@@ -1,27 +1,27 @@
 import { CurrentRoomPayload, RoomUser, ObjectEntity } from './sonar';
 
 export interface GameMessageEvent {
-  join_room: (room: JoinRoomPayload) => void;
-  boop: (boop: BoopPayload) => void;
-  friend_request: (user: { name: string, id: Maybe<number> }) => void;
-  user_join: (data: RoomUser) => void;
-  user_leave: (data: RoomUser) => void;
-  user_move: (data: RoomUser) => void;
-  user_text: (data: RoomUser) => void;
-  user_horn: (data: RoomUser) => void;
-  user_self_mute: (data: RoomUser) => void;
-  user_self_unmute: (data: RoomUser) => void;
-  object_spawn: (data: ObjectEntity) => void;
-  object_dropped: (data: Pick<ObjectEntity, 'id' | 'name' | 'position'>) => void;
-  object_despawn: (data: ObjectEntity) => void;
+  joinedServer: (room: JoinedServerPayload) => void;
+  receivedPing: (boop: PingPayload) => void;
+  receivedFriendRequest: (user: { name: string, id: Maybe<number> }) => void;
+  userJoined: (data: RoomUser) => void;
+  userLeft: (data: RoomUser) => void;
+  userMoved: (data: RoomUser) => void;
+  userUpdatedStatusText: (data: RoomUser) => void;
+  userHorn: (data: RoomUser) => void;
+  userMutedSelf: (data: RoomUser) => void;
+  userUnmutedSelf: (data: RoomUser) => void;
+  objectSpawned: (data: ObjectEntity) => void;
+  objectDespawned: (data: ObjectEntity) => void;
+  objectDropped: (data: Pick<ObjectEntity, 'id' | 'name' | 'position'>) => void;
 }
 
-export interface BoopPayload {
+export interface PingPayload {
   roomId: number;
   roomName: string;
   username: string;
 }
 
-export type JoinRoomPayload = CurrentRoomPayload;
+export type JoinedServerPayload = CurrentRoomPayload;
 
 export * from './sonar';

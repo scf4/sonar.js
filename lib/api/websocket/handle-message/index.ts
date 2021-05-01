@@ -1,5 +1,5 @@
-import { getState, updateState } from 'lib/state';
-import { NoUserIdError } from 'lib/errors';
+import { getState, updateState } from 'lib/store';
+import { LocalStateError, NoUserIdError } from 'lib/errors';
 import { events } from 'lib/api';
 
 import {
@@ -10,6 +10,7 @@ import {
   ServerInviteData,
   ObjectEntity,
   DroppablesDroppedData,
+  SpaceChangedData,
 } from 'lib/types/sonar';
 
 enum ReceivedMessageType {
@@ -30,7 +31,7 @@ enum ReceivedMessageType {
 
 export type ReceivedMessage =
   | { type: ReceivedMessageType.SpaceJoined; data: SpaceJoinedData; }
-  | { type: ReceivedMessageType.SpaceChanged; data: any; }
+  | { type: ReceivedMessageType.SpaceChanged; data: SpaceChangedData; }
   | { type: ReceivedMessageType.DisplayToast; data: DisplayToastData; }
   | { type: ReceivedMessageType.BroadcastSpeaking; data: BroadcastSpeakingData; }
   | { type: ReceivedMessageType.EntitiesChanged; data: EntityChangedData; }
@@ -41,35 +42,36 @@ export type ReceivedMessage =
 function handleMessage(msg: ReceivedMessage): void {
   switch (msg.type) {
     case ReceivedMessageType.SpaceJoined:
-      return handleJoinServer(msg.data);
+      return handleJoinedServer(msg.data);
 
     case ReceivedMessageType.EntitiesChanged:
       return handleEntitiesChanged(msg.data);
 
     case ReceivedMessageType.DroppablesDropped:
-      return handleDroppablesDropped(msg.data.gameObjects[0]);
+      return handleObjectDropped(msg.data.gameObjects.filter(x => !!x)[0]);
 
     case ReceivedMessageType.DisplayToast: {
-      // Server Invite
+      // Received server Invite
       if (msg.data.message.includes('invited you to')) {
         let [username, roomName] = msg.data.highlightedText;
         const roomId = msg.data.senderRoomId!;
         username = username.replace('@', '') ?? null;
-        return handleServerInvite({ roomId, username, roomName });
+        return handleReceivedServerInvite({ roomId, username, roomName });
       }
 
-      // Friend request
+      // Received friend request
       if (msg.data.message.includes('wants to be your friend')) {
         const username = msg.data.highlightedText[0].replace('@', '');
-        return handleFriendRequest(username, msg.data.userId);
+        return handleReceivedFriendRequest(username, msg.data.userId);
       }
     }
   }
 }
 
-function handleDroppablesDropped(item: ObjectEntity) {
+function handleObjectDropped(item: ObjectEntity) {
   const { id, name, position } = item;
-  events.emit('object_dropped', { id, name, position });
+  console.log({ item: JSON.stringify(item) });
+  events.emit('objectDropped', { id, name, position });
 }
 
 function handleEntitiesChanged(data: EntityChangedData) {
@@ -77,19 +79,22 @@ function handleEntitiesChanged(data: EntityChangedData) {
   const object = data.objects?.[0];
 
   if (user) {
-    updateState(state => state.cache.users.set(user.id, user));
-    events.emit('user_join', user);
+    // const { room } = updateState(state => state.cache.users.set(user.id, user));
+    events.emit('userJoined', user); // TODO: Discern between userJoined and userLeft
+    // events.emit('userLeft', user);
   } else if (object) {
-    events.emit('object_spawn', object);
+    events.emit('objectSpawned', object);
   }
 }
 
-function handleServerInvite(data: ServerInviteData) {
-  events.emit('boop', data);
+function handleReceivedServerInvite(data: ServerInviteData) {
+  events.emit('receivedPing', data);
 }
 
-function handleJoinServer(data: SpaceJoinedData) {
-  const user = data.gameData.users.find(u => u.id === getState().userId) ?? NoUserIdError();
+function handleJoinedServer(data: SpaceJoinedData) {
+  const { userId } = getState();
+  
+  const user = data.gameData.users.find(u => u.id === userId) ?? NoUserIdError();
   const x = user.position.x;
   const y = user.position.y;
   const moveId = user.moveId;
@@ -104,11 +109,16 @@ function handleJoinServer(data: SpaceJoinedData) {
 
   updateState(state => (state.moveId = moveId));
 
-  events.emit('join_room', getState().room!);
+  const room = getState().room;
+  
+  if (!room) throw LocalStateError('getState().room is null after joining server');
+
+  events.emit('joinedServer', room);
 }
 
-function handleFriendRequest(username: string, id: Maybe<number>) {
-  events.emit('friend_request', { name: username, id });
+function handleReceivedFriendRequest(username: string, id: Maybe<number>) {
+  events.emit('receivedFriendRequest', { name: username, id });
 }
+
 
 export { handleMessage };
