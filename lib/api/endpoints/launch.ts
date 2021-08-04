@@ -1,9 +1,9 @@
 import * as request from 'lib/api/request';
-import { SONAR_BUILD, SONAR_VERSION } from 'lib/constants';
-import { StateCheckError } from 'lib/errors';
+// import { SONAR_BUILD, SONAR_VERSION } from 'lib/constants';
+// import { StateCheckError } from 'lib/errors';
 import { getState, updateState } from 'lib/store';
-import { AssetsResponse, LaunchResponse } from 'lib/types';
-import { setAuthData } from '../auth';
+import { AssetsResponse, /* LaunchResponse */ } from 'lib/types';
+// import { setAuthData } from '../auth';
 
 const loadAssets = async () => {
   const hash = getState().cache.assets.hash ?? '';
@@ -25,27 +25,27 @@ const loadAssets = async () => {
 };
 
 const launch = async () => {
-  const path = `/launch?version=${SONAR_VERSION}&build=${SONAR_BUILD}`;
-  const resp = await request.get<LaunchResponse>(path);
+  // const path = `/launch?version=${SONAR_VERSION}&build=${SONAR_BUILD}`;
+  // const resp = await request.get<LaunchResponse>(path);
 
-  if (resp.stateCheck.state !== 'ok') {
-    throw StateCheckError(resp.stateCheck.state, resp.stateCheck.message);
-  }
+  // if (resp.stateCheck.state !== 'ok') {
+  //   throw StateCheckError(resp.stateCheck.state, resp.stateCheck.message);
+  // }
 
-  const { user, authToken } = resp.loginInfo
+  // const { user, authToken } = resp.loginInfo
 
-  updateState(state => {
-    state.userId ??= user.id;
+  // updateState(state => {
+  //   state.userId ??= user.id;
 
-    if (user.currentRoomId) {
-      state.initialServerId = user.currentRoomId;
-    }
-  });
+  //   if (user.currentRoomId) {
+  //     state.initialServerId = user.currentRoomId;
+  //   }
+  // });
 
-  setAuthData(store => {
-    store.authToken = authToken;
-    store.clientName = user.username;
-  });
+  // setAuthData(store => {
+  //   store.authToken = authToken;
+  //   store.clientName = user.username;
+  // });
 };
 
 export { loadAssets, launch };
