@@ -1,7 +1,7 @@
 import * as request from 'lib/api/request';
 // import { SONAR_BUILD, SONAR_VERSION } from 'lib/constants';
 // import { StateCheckError } from 'lib/errors';
-import { getState, updateState } from 'lib/store';
+import { updateState } from 'lib/store';
 import { AssetsResponse, /* LaunchResponse */ } from 'lib/types';
 // import { setAuthData } from '../auth';
 
