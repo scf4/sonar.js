@@ -1,6 +1,6 @@
 {
   "name": "@sonar-tools/sonar.js",
-  "version": "0.1.0-alpha.13",
+  "version": "0.1.0-alpha.14",
   "main": "./build/index.js",
   "author": "@sonar-tools",
   "contributors": [
