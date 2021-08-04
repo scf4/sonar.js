@@ -6,7 +6,7 @@ import { AssetsResponse, /* LaunchResponse */ } from 'lib/types';
 // import { setAuthData } from '../auth';
 
 const loadAssets = async () => {
-  const hash = getState().cache.assets.hash ?? '';
+  const hash = ''; // getState().cache.assets.hash ?? '';
   const path = hash ? `/assets?hash=${hash}` : '/assets';
 
   let data: AssetsResponse;
