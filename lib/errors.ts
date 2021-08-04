@@ -6,7 +6,7 @@ const createError = (...errors: (string | Error | undefined)[]) => {
   throw new Error(message);
 };
 
-export const StateCheckCallError = (state: string, msg?: string) =>
+export const StateCheckError = (state: string, msg?: string) =>
   createError(`State check error: ${state}`, msg);
 
 export const UnauthenticatedError = () => createError('Not logged in');
